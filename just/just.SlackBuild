@@ -28,7 +28,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=just
 VERSION=${VERSION:-1.25.2}
-TAG=_cfs
+TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
 
@@ -45,9 +45,9 @@ if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   exit 0
 fi
 
-TMP=${TMP:-/tmp/cfs}
+TMP=${TMP:-/tmp/cosmic}
 PKG=$TMP/package-$PRGNAM
-OUTPUT=${OUTPUT:-/var/cache/cfs}
+OUTPUT=${OUTPUT:-/var/cache/cosmic}
 
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"

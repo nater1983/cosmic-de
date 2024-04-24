@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Slackware build script for 
+# Slackware build script for just
 
-# Copyright 
+# Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c 
+wget -c https://github.com/casey/just/archive/1.25.2/just-1.25.2.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=package-name2
-VERSION=${VERSION:-46.0}
-TAG=_gfs
+PRGNAM=just
+VERSION=${VERSION:-1.25.2}
+TAG=_cfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
 
@@ -45,9 +45,9 @@ if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   exit 0
 fi
 
-TMP=${TMP:-/tmp/gfs}
+TMP=${TMP:-/tmp/cfs}
 PKG=$TMP/package-$PRGNAM
-OUTPUT=${OUTPUT:-$CWD}
+OUTPUT=${OUTPUT:-/var/cache/cfs}
 
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
@@ -81,27 +81,14 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-mkdir build
-cd build
-  CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  meson setup .. \
-    --buildtype=release \
-    --infodir=/usr/info \
-    --libdir=/usr/lib${LIBDIRSUFFIX} \
-    --libexecdir=/usr/libexec \
-    --datadir=/usr/share \
-    --bindir=/usr/bin \
-    --sbindir=/usr/sbin \
-    --includedir=/usr/include \
-    --localstatedir=/var \
-    --mandir=/usr/man \
-    --prefix=/usr \
-    --sysconfdir=/etc \
-    -Dstrip=true
-  "${NINJA:=ninja}"
-  DESTDIR=$PKG $NINJA install
-cd ..
+CARGO_HOME=.cargo \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+cargo build --release $CARGOTARGET
+
+mkdir -p $PKG/usr/bin/
+
+find target -name $PRGNAM -exec install -m 755 {} $PKG/usr/bin/$PRGNAM \;
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
@@ -132,24 +119,13 @@ if [ -d $PKG/usr/info ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a   \
+cp -a CHANGELOG.md CONTRIBUTING.md GRAMMAR.md LICENSE README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
-if [ -r ChangeLog ]; then
-  cat ChangeLog | head -n 1000 > $PKG/usr/doc/$PRGNAM-$VERSION/ChangeLog
-  touch -r ChangeLog $PKG/usr/doc/$PRGNAM/ChangeLog
-fi
-
-# It's a bad idea to ship these in the packages.  If they aren't kept
-# updated, there will be missing icons.  Let the user create them if
-# they care to.
-find $PKG -name icon-theme.cache -exec rm "{}" \+
-find $PKG -name .icon-theme.cache -exec rm "{}" \+
-
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+#zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

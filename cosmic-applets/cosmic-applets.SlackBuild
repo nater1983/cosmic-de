@@ -81,6 +81,7 @@ rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
 sed -i 's/lto = "fat"/lto = "false"/g' Cargo.toml
+patch -Np1 -i $CWD/symlink.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -125,7 +126,7 @@ if [ -d $PKG/usr/info ]; then
 fi
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a CHANGELOG.md CONTRIBUTING.md GRAMMAR.md LICENSE README.md \
+cp -a LICENSE \
     $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 

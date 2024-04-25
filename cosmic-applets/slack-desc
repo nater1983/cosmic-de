@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
     |-----handy-ruler------------------------------------------------------|
-just: just (Just a command runner )
-just:
-just: just is a handy way to save and run project-specific commands.
-just: Commands are stored in a file called justfile or Justfile with syntax
-just: inspired by make. It works on Linux, MacOS, and Windows.
-just:
-just:
-just: Homepage: https://github.com/casey/just
-just:
-just:
-just:
+cosmic-applets: cosmic-applets ( WIP applets for cosmic-panel  )
+cosmic-applets:
+cosmic-applets: Applets for the COSMIC Desktop Environment.
+cosmic-applets:
+cosmic-applets:
+cosmic-applets:
+cosmic-applets: Homepage: https://github.com/pop-os/cosmic-applets
+cosmic-applets:
+cosmic-applets:
+cosmic-applets:
+cosmic-applets:

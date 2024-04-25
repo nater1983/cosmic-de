@@ -95,7 +95,7 @@ CXXFLAGS="$SLKCFLAGS" \
 cargo build --release $CARGOTARGET
 
 nice just build-vendored
-just rootdir="$PKG" install
+just rootdir=$PKG prefix=/usr install
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 

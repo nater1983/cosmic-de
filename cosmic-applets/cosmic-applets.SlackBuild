@@ -83,10 +83,9 @@ find -L . \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 CARGO_HOME=.cargo \
-RUSTUP_TOOLCHAIN=stable
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-cargo build --release $CARGOTARGET $RUSTUP_TOOLCHAIN
+cargo build --release $CARGOTARGET
 
 nice just build-vendored
 just rootdir="$PKG" install

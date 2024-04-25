@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Slackware build script for just
+# Slackware build script for cosmic-applets
 
 # Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
 # All rights reserved.
@@ -22,12 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/casey/just/archive/1.25.2/just-1.25.2.tar.gz
+wget -c https://github.com/pop-os/cosmic-applets/archive/e4a6f947233e490f157827c2306ac7e3eec8cefa/cosmic-applets-e4a6f947233e490f157827c2306ac7e3eec8cefa.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=just
-VERSION=${VERSION:-1.25.2}
+PRGNAM=cosmic-applets
+VERSION=${VERSION:-r880.e4a6f94}
+_commit=e4a6f947233e490f157827c2306ac7e3eec8cefa
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -71,9 +72,9 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.?z || exit 1
-cd $PRGNAM-$VERSION || exit 1
+rm -rf $PRGNAM-$_commit
+tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
+cd $PRGNAM-$_commit || exit 1
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -82,13 +83,13 @@ find -L . \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 CARGO_HOME=.cargo \
+RUSTUP_TOOLCHAIN=stable
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-cargo build --release $CARGOTARGET
+cargo build --release $CARGOTARGET $RUSTUP_TOOLCHAIN
 
-mkdir -p $PKG/usr/bin/
-
-find target -name $PRGNAM -exec install -m 755 {} $PKG/usr/bin/$PRGNAM \;
+nice just build-vendored
+just rootdir="$PKG" install
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 

@@ -91,10 +91,12 @@ find -L . \
 CARGO_HOME=.cargo \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-cargo build --release $CARGOTARGET
 
-nice just build-vendored
-just rootdir=$PKG prefix=/usr install
+make vendor
+make VENDOR='1' all
+make DESTDIR=$PKG install
+
+install -Dm644 config.ron -t $PKG/etc/cosmic-comp
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 

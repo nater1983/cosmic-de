@@ -97,6 +97,7 @@ make VENDOR='1' all
 make DESTDIR=$PKG install
 
 install -Dm644 config.ron -t $PKG/etc/cosmic-comp
+mv $PKG/etc/cosmic-comp/{config.ron,config.ron.new}
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 

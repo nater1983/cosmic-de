@@ -80,6 +80,7 @@ cd $TMP
 rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
+sed -i 's/lto = "fat"/lto = "false"/g' Cargo.toml
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \

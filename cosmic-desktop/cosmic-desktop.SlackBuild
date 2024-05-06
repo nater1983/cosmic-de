@@ -27,6 +27,7 @@ wget -c https://github.com/pop-os/cosmic-epoch/archive/f6793a7ebdf4e364795b6fd9d
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-desktop
+SRCNAM=cosmic-epoch
 VERSION=${VERSION:-0.1.0}
 _cosmic=f6793a7ebdf4e364795b6fd9d091689d4ec85772
 TAG=_cosmic
@@ -49,6 +50,7 @@ fi
 TMP=${TMP:-/tmp/cosmic}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/var/cache/cosmic}
+
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
@@ -76,9 +78,9 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$_commit
-tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
-cd $PRGNAM-$_commit || exit 1
+rm -rf $SRCNAM-$_commit
+tar xvf $CWD/$SRCNAM-$_commit.tar.?z || exit 1
+cd $SRCNAM-$_commit || exit 1
 patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
@@ -87,12 +89,8 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release $CARGOTARGET
-
 nice just build-vendored
+just rootdir="" prefix=/usr install
 just rootdir=$PKG prefix=/usr install
 
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la

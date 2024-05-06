@@ -1,0 +1,33 @@
+From fe23a6f903e8b032233241757a250463518746fc Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 5 May 2024 21:38:25 -0500
+Subject: [PATCH] Update justfile
+
+---
+ justfile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/justfile b/justfile
+index 218d2ef..664e32b 100644
+--- a/justfile
++++ b/justfile
+@@ -25,7 +25,7 @@ build:
+     {{ make }} -C cosmic-workspaces-epoch all
+     {{ make }} -C xdg-desktop-portal-cosmic all
+ 
+-install rootdir="" prefix="/usr/local": build
++install rootdir="" prefix="/usr": build
+     {{ just }} rootdir={{rootdir}} prefix={{prefix}} cosmic-applets/install
+     {{ just }} rootdir={{rootdir}} prefix={{prefix}} cosmic-applibrary/install
+     {{ just }} rootdir={{rootdir}} prefix={{prefix}} cosmic-bg/install
+@@ -53,8 +53,8 @@ _mkdir dir:
+ 
+ sysext dir=(invocation_directory() / "cosmic-sysext") version=("nightly-" + `git rev-parse --short HEAD`): (_mkdir dir) (install dir "/usr")
+     #!/usr/bin/env sh
+-    mkdir -p {{dir}}/usr/lib/extension-release.d/
+-    cat >{{dir}}/usr/lib/extension-release.d/extension-release.cosmic-sysext <<EOF
++    mkdir -p {{dir}}/usr/lib${LIBDIRSUFFIX}/extension-release.d/
++    cat >{{dir}}/usr/lib${LIBDIRSUFFIX}/extension-release.d/extension-release.cosmic-sysext <<EOF
+     NAME="Cosmic DE"
+     VERSION={{version}}
+     $(cat /etc/os-release | grep '^ID=')

@@ -83,7 +83,7 @@ tar xvf $CWD/$SRCNAM-$_commit.tar.?z || exit 1
 cd $SRCNAM-$_commit || exit 1
 rm -fr *.*
 git clone https://github.com/pop-os/cosmic-epoch.git
-cp -av cosmic-epoch/*.* $TMP/$SRCNAM-$_commit
+cd cosmic-epoch/
 git checkout $_commit
 git submodule init
 git submodule update

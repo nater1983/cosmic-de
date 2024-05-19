@@ -91,7 +91,7 @@ CARGO_HOME=.cargo \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 
-nice just build-vendored
+nice just build-release
 just rootdir=$PKG prefix=/usr install
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \

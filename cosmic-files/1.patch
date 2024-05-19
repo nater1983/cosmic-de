@@ -1,0 +1,28 @@
+From a91b3f2f7a47cce60eaa3a8457c6fa03ce9582a9 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 19 May 2024 10:57:57 -0500
+Subject: [PATCH] Update justfile
+
+---
+ justfile | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/justfile b/justfile
+index 82dcb6b..04ea90e 100644
+--- a/justfile
++++ b/justfile
+@@ -36,12 +36,9 @@ clean-vendor:
+ # `cargo clean` and removes vendored dependencies
+ clean-dist: clean clean-vendor
+ 
+-# Compiles with debug profile
+-build-debug *args:
+-    cargo build {{args}}
+-
+ # Compiles with release profile
+-build-release *args: (build-debug '--release' args)
++build-release *args:
++    cargo build --release {{args}}
+ 
+ # Compiles release profile with vendored dependencies
+ build-vendored *args: vendor-extract (build-release '--frozen --offline' args)

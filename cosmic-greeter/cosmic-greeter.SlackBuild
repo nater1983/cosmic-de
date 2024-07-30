@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-greeter/archive/d8c81ce3fb1e54fad6911ed6ae688f0ee351fcd7/cosmic-greeter-d8c81ce3fb1e54fad6911ed6ae688f0ee351fcd7.tar.gz
+wget -c https://github.com/pop-os/cosmic-greeter/archive/acc30acc62533cb23c474f4c36af607b75d5d0e8/cosmic-greeter-acc30acc62533cb23c474f4c36af607b75d5d0e8.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-greeter
-VERSION=${VERSION:-r74.d8c81ce}
-_commit=d8c81ce3fb1e54fad6911ed6ae688f0ee351fcd7
+VERSION=${VERSION:-r74.acc30ac}
+_commit=acc30acc62533cb23c474f4c36af607b75d5d0e8
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

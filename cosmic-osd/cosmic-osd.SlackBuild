@@ -27,7 +27,7 @@ wget -c https://github.com/pop-os/cosmic-osd/archive/27fc5e5ba4bbed119a1fc85f840
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-osd
-VERSION=${VERSION:-1.25.2}
+VERSION=${VERSION:-r109.27fc5e5}
 _commit=27fc5e5ba4bbed119a1fc85f840db0ade13dde85
 TAG=_cosmic
 BUILD=${BUILD:-1}

@@ -28,6 +28,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-randr
 VERSION=${VERSION:-r26.71fabbb}
+_commit=71fabbb382fa8cf750f50fb77c4ba014bff80056
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

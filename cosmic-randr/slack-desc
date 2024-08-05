@@ -5,15 +5,15 @@
 # You must make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':' except on otherwise blank lines.
 
-    |-----handy-ruler------------------------------------------------------|
-just: just (Just a command runner )
-just:
-just: just is a handy way to save and run project-specific commands.
-just: Commands are stored in a file called justfile or Justfile with syntax
-just: inspired by make. It works on Linux, MacOS, and Windows.
-just:
-just:
-just: Homepage: https://github.com/casey/just
-just:
-just:
-just:
+            |-----handy-ruler------------------------------------------------------|
+cosmic-randr: cosmic-randr ( Library and utility for displaying Wayland outputs )
+cosmic-randr:
+cosmic-randr: Library and utility for displaying and configuring Wayland outputs.
+cosmic-randr:
+cosmic-randr:
+cosmic-randr:
+cosmic-randr: Homepage: https://github.com/pop-os/cosmic-randr
+cosmic-randr:
+cosmic-randr:
+cosmic-randr:
+cosmic-randr:

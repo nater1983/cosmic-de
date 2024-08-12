@@ -86,9 +86,9 @@ find -L . \
 CARGO_HOME=.cargo \
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
+cargo build --release --no-default-features $CARGOTARGET
 
-nice just build
-just --no-default-features rootdir=$PKG install
+just  rootdir=$PKG install
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

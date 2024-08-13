@@ -27,7 +27,7 @@ wget -c https://github.com/pop-os/cosmic-notifications/archive/e9abef567a928cfa8
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-notifications
-VERSION=${VERSION:-1.25.2}
+VERSION=${VERSION:-20240812.e9abef5}
 _commit=e9abef567a928cfa88949dbbdb5c49bb87c2f6a0
 TAG=_cosmic
 BUILD=${BUILD:-1}
@@ -53,18 +53,23 @@ OUTPUT=${OUTPUT:-/var/cache/cosmic}
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
+  CARGOTARGET="--target i586-unknown-linux-gnu"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
+  CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
+  CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
+  CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
+  CARGOTARGET=""
 fi
 
 set -e

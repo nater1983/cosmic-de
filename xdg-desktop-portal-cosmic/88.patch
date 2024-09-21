@@ -1,0 +1,23 @@
+From 24bd03d139477ed4075fc8c265413335697306e0 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Tue, 3 Sep 2024 22:46:23 -0500
+Subject: [PATCH] Update access.rs
+
+Add in the zbus interface name org.freedesktop.impl.portal.Access
+---
+ src/access.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/access.rs b/src/access.rs
+index 2e4c107..e54374d 100644
+--- a/src/access.rs
++++ b/src/access.rs
+@@ -51,7 +51,7 @@ impl Access {
+     }
+ }
+ 
+-#[zbus::interface(name = "")]
++#[zbus::interface(name = "org.freedesktop.impl.portal.Access")]
+ impl Access {
+     #[allow(clippy::too_many_arguments)]
+     async fn access_dialog(

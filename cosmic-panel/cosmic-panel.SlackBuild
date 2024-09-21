@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-panel/archive/962efed9911542a2b7867e0556ae6cade8c8970d/cosmic-panel-962efed9911542a2b7867e0556ae6cade8c8970d.tar.gz
+wget -c https://github.com/pop-os/cosmic-panel/archive/4fedcbfc3574600b58de6da6c2401c92264537bd/cosmic-panel-4fedcbfc3574600b58de6da6c2401c92264537bd.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-panel
-VERSION=${VERSION:-r441.962efed}
-_commit=962efed9911542a2b7867e0556ae6cade8c8970d
+VERSION=20240911.4fedcbf
+_commit=4fedcbfc3574600b58de6da6c2401c92264537bd
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -57,10 +57,10 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
 else
   SLKCFLAGS="-O2"
@@ -82,12 +82,11 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-
-nice just build-release
-just rootdir=$PKG prefix=/usr install
+export RUSTUP_TOOLCHAIN=stable
+cargo fetch --locked
+RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
+just build-release --frozen
+just rootdir=$PKG install
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/xdg-desktop-portal-cosmic/archive/41c1e7cfd0779db6005fc64798ac75b630332678/xdg-desktop-portal-cosmic-41c1e7cfd0779db6005fc64798ac75b630332678.tar.gz
+wget -c https://github.com/pop-os/xdg-desktop-portal-cosmic/archive/03956611cb515c0ad0b77ccfb760fff78592cd4e/xdg-desktop-portal-cosmic-03956611cb515c0ad0b77ccfb760fff78592cd4e.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=xdg-desktop-portal-cosmic
-VERSION=${VERSION:-20240814.41c1e7c}
-_commit=41c1e7cfd0779db6005fc64798ac75b630332678
+VERSION=20240921.0395661
+_commit=03956611cb515c0ad0b77ccfb760fff78592cd4e
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -59,11 +59,11 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
   CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
@@ -81,6 +81,7 @@ rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
 sed -i 's/lto = "fat"/lto = "thin"/g' Cargo.toml
+patch -Np1 -i $CWD/88.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -92,7 +93,7 @@ cargo fetch --locked
 RUSTFLAGS+=" -C link-arg=-fuse-ld=lld"
 make ARGS+=" --frozen --release"
 
-make prefix=/usr libexecdir=/usr/lib${LIBDIRSUFFIX} DESTDIR=$PKG install
+make prefix=/usr libexecdir=/usr/libexec DESTDIR=$PKG install
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

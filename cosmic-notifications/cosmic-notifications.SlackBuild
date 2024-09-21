@@ -27,7 +27,7 @@ wget -c https://github.com/pop-os/cosmic-notifications/archive/e9abef567a928cfa8
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-notifications
-VERSION=${VERSION:-20240812.e9abef5}
+VERSION=20240801.e9abef5
 _commit=e9abef567a928cfa88949dbbdb5c49bb87c2f6a0
 TAG=_cosmic
 BUILD=${BUILD:-1}
@@ -59,11 +59,11 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
   CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
@@ -88,13 +88,12 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-cargo build --release --no-default-features $CARGOTARGET
-just rootdir=$PKG prefix=/usr install
-
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+export RUSTUP_TOOLCHAIN=stable
+cargo fetch --locked
+sed -i 's/lld/mold/g' justfile
+RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
+just build-release --frozen
+just rootdir=$PKG install
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
@@ -129,7 +128,7 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-#zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

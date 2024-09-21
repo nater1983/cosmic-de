@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                  |-----handy-ruler------------------------------------------------------|
-cosmic-applibrary: cosmic-applibrary (Just a command runner )
+cosmic-applibrary: cosmic-applibrary ( Cosmic App Library )
 cosmic-applibrary:
-cosmic-applibrary: App Library program for the COSMIC Desktop Environment.
+cosmic-applibrary: Cosmic App Library is an application launcher for the COSMIC desktop
+cosmic-applibrary: that lists all installed applications in a grid.
 cosmic-applibrary:
 cosmic-applibrary:
+cosmic-applibrary: Homepage: https://github.com/pop-os/cosmic-applibrary
 cosmic-applibrary:
-cosmic-applibrary:
-cosmic-applibrary: Homepage: https://github.com/casey/just
 cosmic-applibrary:
 cosmic-applibrary:
 cosmic-applibrary:

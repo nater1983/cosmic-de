@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-greeter/archive/acc30acc62533cb23c474f4c36af607b75d5d0e8/cosmic-greeter-acc30acc62533cb23c474f4c36af607b75d5d0e8.tar.gz
+wget -c https://reddoglinux.ddns.net/distfile/cosmic-greeter-55c02cdca9e37a54f7c75185f456bdd34497c58f.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-greeter
-VERSION=${VERSION:-r74.acc30ac}
-_commit=acc30acc62533cb23c474f4c36af607b75d5d0e8
+VERSION=20240906.55c02cd
+_commit=55c02cdca9e37a54f7c75185f456bdd34497c58f
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -59,11 +59,11 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
   CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
@@ -87,12 +87,16 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+export VERGEN_GIT_COMMIT_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S %z')"
+export VERGEN_GIT_SHA=$_commit
+export RUSTUP_TOOLCHAIN=stable
+cargo fetch --locked
+RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
+just build-release --frozen
+just rootdir=$PKG install
 
-nice just build-release
-just rootdir=$PKG prefix=/usr install
+install -Dm644 "$PRGNAM.toml" -t "$PKG/etc/greetd/"
+install -Dm644 debian/"$PRGNAM"{.service,-daemon.service} -t "$PKG/usr/lib/systemd/system/"
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

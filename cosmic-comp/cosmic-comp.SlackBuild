@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-comp/archive/90227471bf66b4f63554905becfcf3308f3fedeb/cosmic-comp-90227471bf66b4f63554905becfcf3308f3fedeb.tar.gz
+wget -c https://github.com/pop-os/cosmic-comp/archive/ad449f9db0437b0c52f18090f0b92d2a64e59de9/cosmic-comp-ad449f9db0437b0c52f18090f0b92d2a64e59de9.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-comp
-VERSION=${VERSION:r996.9022747}
-_commit=90227471bf66b4f63554905becfcf3308f3fedeb
+VERSION=20240920.ad449f9
+_commit=ad449f9db0437b0c52f18090f0b92d2a64e59de9
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -59,11 +59,11 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
   CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -fPIC"
+  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
@@ -80,7 +80,7 @@ cd $TMP
 rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
-sed -i 's/lto = "thin"/lto = "false"/g' Cargo.toml
+patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -88,44 +88,15 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-CARGO_HOME=.cargo \
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
 
-make vendor
-make VENDOR='1' all
+export RUSTUP_TOOLCHAIN=stable
+cargo fetch --locked
+RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
+cargo build --release --no-default-features --frozen
 make DESTDIR=$PKG install
-
-install -Dm644 config.ron -t $PKG/etc/cosmic-comp
-mv $PKG/etc/cosmic-comp/{config.ron,config.ron.new}
-
-rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
-
-# Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-  ( cd $PKG/usr/man
-    for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.*
-      )
-    done
-  )
-fi
-
-# Compress info files, if any:
-if [ -d $PKG/usr/info ]; then
-  ( cd $PKG/usr/info
-    rm -f dir
-    gzip -9 *
-  )
-fi
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a LICENSE \
@@ -134,7 +105,6 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-#zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Slackware build script for sddm-sugar-candy
+
+# Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+wget -c https://framagit.org/MarianArlt/sddm-sugar-candy/-/archive/2b72ef6c6f720fe0ffde5ea5c7c48152e02f6c4f/sddm-sugar-candy-2b72ef6c6f720fe0ffde5ea5c7c48152e02f6c4f.tar.gz
+
+cd $(dirname $0) ; CWD=$(pwd)
+
+PRGNAM=sddm-sugar-candy
+VERSION=${VERSION:-20240821.2b72ef6}
+_commit=2b72ef6c6f720fe0ffde5ea5c7c48152e02f6c4f
+BUILD=${BUILD:-1}
+ARCH=noarch
+TAG=${TAG:-_cosmic}
+PKGTYPE=${PKGTYPE:-txz}
+
+if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
+  echo "$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE"
+  exit 0
+fi
+
+TMP=${TMP:-/tmp/cosmic}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/var/cache/cosmic}
+
+set -e
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $PRGNAM-$_commit
+tar xvf $CWD/$PRGNAM-$_commit.tar.gz
+cd $PRGNAM-$_commit
+sed -i 's/DateFormat="dddd, d of MMMM"/DateFormat="dddd, d MMMM"/g' theme.conf
+chown -R root:root .
+find -L . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+
+mkdir -p $PKG/usr/share/sddm/themes/sugar-candy
+cp -r . $PKG/usr/share/sddm/themes/sugar-candy
+install -vDm 0644 $CWD/sddm.conf $PKG/etc/sddm.conf.new
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a AUTHORS CHANGELOG.md COPYING CREDITS \
+  $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE

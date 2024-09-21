@@ -1,0 +1,34 @@
+#!/bin/bash
+
+PRGDIR="/usr/libexec"
+PRGNAM="switcheroo-control"
+
+src_start() {
+	echo "Start $PRGNAM...."
+	$PRGDIR/$PRGNAM > /dev/null&
+}
+
+src_stop() {
+    echo "Stop $PRGNAM" 
+    pkill -f $PRGNAM > /dev/null& 
+}
+
+case "$1" in
+    start)
+        src_start
+        ;;
+    stop)
+        src_stop
+        ;;
+    restart)
+        ${0} stop
+        sleep 1
+        ${0} start
+        ;;
+    status)
+        ;;
+    *)
+       echo "Usage: $0 start|stop"
+esac
+
+exit 0

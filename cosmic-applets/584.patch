@@ -1,0 +1,425 @@
+From f9e9f60676007f1507dcf9fd357e37f4168b314d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A1s?= <zanaviska@dlink.uaua@tutanota.com>
+Date: Tue, 13 Aug 2024 12:06:51 +0300
+Subject: [PATCH 1/3] Added text for interface
+
+---
+ cosmic-applet-network/i18n/en/cosmic_applet_network.ftl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/cosmic-applet-network/i18n/en/cosmic_applet_network.ftl b/cosmic-applet-network/i18n/en/cosmic_applet_network.ftl
+index fdd8661d..c1330fd9 100644
+--- a/cosmic-applet-network/i18n/en/cosmic_applet_network.ftl
++++ b/cosmic-applet-network/i18n/en/cosmic_applet_network.ftl
+@@ -17,4 +17,5 @@ enter-password = Enter the password or encryption key
+ router-wps-button = You can also connect by pressing the "WPS" button on the router
+ unable-to-connect = Unable to connect to network
+ check-wifi-connection = Make sure Wi-Fi is connected to the internet and the password is correct
+-reset = Reset
+\ No newline at end of file
++reset = Reset
++iface = iface
+
+From 1cb6618105892801900c5f2142f232c30dbda395 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A1s?= <zanaviska@dlink.uaua@tutanota.com>
+Date: Tue, 13 Aug 2024 12:08:18 +0300
+Subject: [PATCH 2/3] Added ui support for iface on wifi connection
+
+---
+ cosmic-applet-network/src/app.rs              | 48 +++++++++++++++++--
+ .../src/network_manager/available_wifi.rs     |  8 +++-
+ .../src/network_manager/current_networks.rs   |  2 +
+ .../src/network_manager/mod.rs                |  2 +-
+ 4 files changed, 55 insertions(+), 5 deletions(-)
+
+diff --git a/cosmic-applet-network/src/app.rs b/cosmic-applet-network/src/app.rs
+index bf9a1785..e95055a0 100644
+--- a/cosmic-applet-network/src/app.rs
++++ b/cosmic-applet-network/src/app.rs
+@@ -550,6 +550,12 @@ impl cosmic::Application for CosmicNetworkApplet {
+     fn view_window(&self, _id: window::Id) -> Element<Message> {
+         let mut vpn_ethernet_col = column![];
+         let mut known_wifi = Vec::new();
++        let mut count_access_points = std::collections::HashMap::new();
++        for access_point in &self.nm_state.wireless_access_points {
++            *count_access_points
++                .entry(access_point.ssid.clone())
++                .or_insert(0) += 1;
++        }
+         for conn in &self.nm_state.active_conns {
+             match conn {
+                 ActiveConnectionInfo::Vpn { name, ip_addresses } => {
+@@ -617,11 +623,21 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     ip_addresses,
+                     state,
+                     strength,
++                    iface,
+                     ..
+                 } => {
+                     let mut ipv4 = Vec::with_capacity(ip_addresses.len());
++                    let has_duplicates = *count_access_points.entry(name.clone()).or_insert(0) > 1;
+                     for addr in ip_addresses {
+-                        ipv4.push(text(format!("{}: {}", fl!("ipv4"), addr)).size(12).into());
++                        ipv4.push(
++                            text(if has_duplicates {
++                                format!("{}: {} {}: {}", fl!("ipv4"), addr, fl!("iface"), iface)
++                            } else {
++                                format!("{}: {}", fl!("ipv4"), addr)
++                            })
++                            .size(12)
++                            .into(),
++                        );
+                     }
+                     let mut btn_content = vec![
+                         icon::from_name(wifi_icon(*strength))
+@@ -750,7 +766,19 @@ impl cosmic::Application for CosmicNetworkApplet {
+                             .symbolic(true)
+                             .into(),
+                     );
+-                    btn_content.push(ssid.into());
++                    let ifaces = vec![text(format!("{}: {}", fl!("iface"), &known.interface))
++                        .size(12)
++                        .into()];
++
++                    if *count_access_points.entry(known.ssid.clone()).or_insert(0) > 1 {
++                        btn_content.push(
++                            column![ssid, Column::with_children(ifaces)]
++                                .width(Length::Fill)
++                                .into(),
++                        );
++                    } else {
++                        btn_content.push(ssid.into());
++                    }
+                 }
+ 
+                 if self.failed_known_ssids.contains(&known.ssid) {
+@@ -911,12 +939,26 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     {
+                         continue;
+                     }
++
++                    let mut ifaces = vec![];
++                    if *count_access_points.entry(ap.ssid.clone()).or_insert(0) > 1 {
++                        ifaces.push(
++                            text(format!("{}: {}", fl!("iface"), &ap.interface))
++                                .size(10)
++                                .into(),
++                        );
++                    }
++                    let wifi_text = column![
++                        text::body(&ap.ssid).vertical_alignment(Vertical::Center),
++                        Column::with_children(ifaces)
++                    ];
++
+                     let button = menu_button(
+                         row![
+                             icon::from_name(wifi_icon(ap.strength))
+                                 .size(16)
+                                 .symbolic(true),
+-                            text::body(&ap.ssid).vertical_alignment(Vertical::Center)
++                            wifi_text,
+                         ]
+                         .align_items(Alignment::Center)
+                         .spacing(12),
+diff --git a/cosmic-applet-network/src/network_manager/available_wifi.rs b/cosmic-applet-network/src/network_manager/available_wifi.rs
+index f3b135cd..9ee567a2 100644
+--- a/cosmic-applet-network/src/network_manager/available_wifi.rs
++++ b/cosmic-applet-network/src/network_manager/available_wifi.rs
+@@ -7,7 +7,10 @@ use itertools::Itertools;
+ use std::collections::HashMap;
+ use zbus::zvariant::ObjectPath;
+ 
+-pub async fn handle_wireless_device(device: WirelessDevice<'_>) -> zbus::Result<Vec<AccessPoint>> {
++pub async fn handle_wireless_device(
++    device: WirelessDevice<'_>,
++    iface: Option<String>,
++) -> zbus::Result<Vec<AccessPoint>> {
+     device.request_scan(HashMap::new()).await?;
+     let mut scan_changed = device.receive_last_scan_changed().await;
+     if let Some(t) = scan_changed.next().await {
+@@ -26,6 +29,7 @@ pub async fn handle_wireless_device(device: WirelessDevice<'_>) -> zbus::Result<
+         .unwrap_or_else(|| DeviceState::Unknown);
+     // Sort by strength and remove duplicates
+     let mut aps = HashMap::<String, AccessPoint>::new();
++    let iface = iface.unwrap_or("".to_string());
+     for ap in access_points {
+         let ssid = String::from_utf8_lossy(&ap.ssid().await?.clone()).into_owned();
+         let strength = ap.strength().await?;
+@@ -42,6 +46,7 @@ pub async fn handle_wireless_device(device: WirelessDevice<'_>) -> zbus::Result<
+                 state,
+                 working: false,
+                 path: ap.inner().path().to_owned(),
++                interface: iface.clone(),
+             },
+         );
+     }
+@@ -59,4 +64,5 @@ pub struct AccessPoint {
+     pub state: DeviceState,
+     pub working: bool,
+     pub path: ObjectPath<'static>,
++    pub interface: String,
+ }
+diff --git a/cosmic-applet-network/src/network_manager/current_networks.rs b/cosmic-applet-network/src/network_manager/current_networks.rs
+index c6f7d5aa..2c33f44a 100644
+--- a/cosmic-applet-network/src/network_manager/current_networks.rs
++++ b/cosmic-applet-network/src/network_manager/current_networks.rs
+@@ -53,6 +53,7 @@ pub async fn active_connections(
+                             hw_address: wireless_device.hw_address().await?,
+                             state,
+                             strength: access_point.strength().await.unwrap_or_default(),
++                            iface: device.interface().await?,
+                         });
+                     }
+                 }
+@@ -93,6 +94,7 @@ pub enum ActiveConnectionInfo {
+         hw_address: String,
+         state: ActiveConnectionState,
+         strength: u8,
++        iface: String,
+     },
+     Vpn {
+         name: String,
+diff --git a/cosmic-applet-network/src/network_manager/mod.rs b/cosmic-applet-network/src/network_manager/mod.rs
+index bf3b5fb5..3b4f3b53 100644
+--- a/cosmic-applet-network/src/network_manager/mod.rs
++++ b/cosmic-applet-network/src/network_manager/mod.rs
+@@ -347,7 +347,7 @@ impl NetworkManagerState {
+                 if let Ok(Some(SpecificDevice::Wireless(wireless_device))) =
+                     device.downcast_to_device().await
+                 {
+-                    handle_wireless_device(wireless_device)
++                    handle_wireless_device(wireless_device, device.interface().await.ok())
+                         .await
+                         .unwrap_or_default()
+                 } else {
+
+From 69bc740cbcbdacb5f419b8352362657a1134133b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A1s?= <zanaviska@dlink.uaua@tutanota.com>
+Date: Tue, 13 Aug 2024 13:04:36 +0300
+Subject: [PATCH 3/3] Made wifi connect to correct iface
+
+---
+ cosmic-applet-network/src/app.rs              | 27 ++++++------
+ .../src/network_manager/mod.rs                | 43 ++++++++++++-------
+ 2 files changed, 43 insertions(+), 27 deletions(-)
+
+diff --git a/cosmic-applet-network/src/app.rs b/cosmic-applet-network/src/app.rs
+index e95055a0..b3f1f5c4 100644
+--- a/cosmic-applet-network/src/app.rs
++++ b/cosmic-applet-network/src/app.rs
+@@ -206,7 +206,7 @@ impl CosmicNetworkApplet {
+ 
+ #[derive(Debug, Clone)]
+ pub(crate) enum Message {
+-    ActivateKnownWifi(String),
++    ActivateKnownWifi(String, String),
+     Disconnect(String),
+     TogglePopup,
+     CloseRequested(window::Id),
+@@ -317,7 +317,7 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     success,
+                     req,
+                 } => {
+-                    if let NetworkManagerRequest::SelectAccessPoint(ssid) = &req {
++                    if let NetworkManagerRequest::SelectAccessPoint(ssid, iface) = &req {
+                         let conn_match = self
+                             .new_connection
+                             .as_ref()
+@@ -344,11 +344,11 @@ impl cosmic::Application for CosmicNetworkApplet {
+                         {
+                             self.failed_known_ssids.insert(ssid.clone());
+                         }
+-                    } else if let NetworkManagerRequest::Password(ssid, _) = &req {
++                    } else if let NetworkManagerRequest::Password(ssid, _, iface) = &req {
+                         if let Some(NewConnectionState::Waiting(access_point)) =
+                             self.new_connection.clone()
+                         {
+-                            if !success && ssid == &access_point.ssid {
++                            if !success && ssid == &access_point.ssid && iface == &access_point.interface {
+                                 self.new_connection =
+                                     Some(NewConnectionState::Failure(access_point.clone()));
+                             } else {
+@@ -359,7 +359,7 @@ impl cosmic::Application for CosmicNetworkApplet {
+                             access_point, ..
+                         }) = self.new_connection.clone()
+                         {
+-                            if success && ssid == &access_point.ssid {
++                            if success && ssid == &access_point.ssid && iface == &access_point.interface {
+                                 self.new_connection = None;
+                                 self.show_visible_networks = false;
+                             }
+@@ -369,7 +369,7 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     .as_ref()
+                     .map(|c| c.ssid()).is_some_and(|ssid| {
+                         state.active_conns.iter().any(|c|
+-                            matches!(c, ActiveConnectionInfo::WiFi { name, state: ActiveConnectionState::Activated, .. } if ssid == name)
++                            matches!(c, ActiveConnectionInfo::WiFi { name, state: ActiveConnectionState::Activated, iface, .. } if ssid == name)
+                         )
+                     }) {
+                         self.new_connection = None;
+@@ -397,6 +397,7 @@ impl cosmic::Application for CosmicNetworkApplet {
+ 
+                 let _ = tx.unbounded_send(NetworkManagerRequest::SelectAccessPoint(
+                     access_point.ssid.clone(),
++                    access_point.interface.clone(),
+                 ));
+ 
+                 self.new_connection = Some(NewConnectionState::EnterPassword {
+@@ -431,18 +432,19 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     let _ = tx.unbounded_send(NetworkManagerRequest::Password(
+                         access_point.ssid.clone(),
+                         password,
++                        access_point.interface.clone(),
+                     ));
+                     self.new_connection
+                         .replace(NewConnectionState::Waiting(access_point));
+                 };
+             }
+-            Message::ActivateKnownWifi(ssid) => {
++            Message::ActivateKnownWifi(ssid, iface) => {
+                 let tx = if let Some(tx) = self.nm_sender.as_ref() {
+                     if let Some(ap) = self
+                         .nm_state
+                         .known_access_points
+                         .iter_mut()
+-                        .find(|c| c.ssid == ssid)
++                        .find(|c| c.ssid == ssid && c.interface == iface)
+                     {
+                         ap.working = true;
+                     }
+@@ -450,7 +452,7 @@ impl cosmic::Application for CosmicNetworkApplet {
+                 } else {
+                     return Command::none();
+                 };
+-                let _ = tx.unbounded_send(NetworkManagerRequest::SelectAccessPoint(ssid));
++                let _ = tx.unbounded_send(NetworkManagerRequest::SelectAccessPoint(ssid, iface));
+             }
+             Message::CancelNewConnection => {
+                 self.new_connection = None;
+@@ -800,9 +802,10 @@ impl cosmic::Application for CosmicNetworkApplet {
+                     | DeviceState::Unknown
+                     | DeviceState::Unmanaged
+                     | DeviceState::Disconnected
+-                    | DeviceState::NeedAuth => {
+-                        btn.on_press(Message::ActivateKnownWifi(known.ssid.clone()))
+-                    }
++                    | DeviceState::NeedAuth => btn.on_press(Message::ActivateKnownWifi(
++                        known.ssid.clone(),
++                        known.interface.clone(),
++                    )),
+                     DeviceState::Activated => btn.on_press(Message::Disconnect(known.ssid.clone())),
+                     _ => btn,
+                 };
+diff --git a/cosmic-applet-network/src/network_manager/mod.rs b/cosmic-applet-network/src/network_manager/mod.rs
+index 3b4f3b53..47591818 100644
+--- a/cosmic-applet-network/src/network_manager/mod.rs
++++ b/cosmic-applet-network/src/network_manager/mod.rs
+@@ -166,15 +166,19 @@ async fn start_listening(
+                     };
+                     _ = output.send(response).await;
+                 }
+-                Some(NetworkManagerRequest::Password(ssid, password)) => {
++                Some(NetworkManagerRequest::Password(ssid, password, iface)) => {
+                     let nm_state = NetworkManagerState::new(&conn).await.unwrap_or_default();
+                     let success = nm_state
+-                        .connect_wifi(&conn, &ssid, Some(&password))
++                        .connect_wifi(&conn, &ssid, Some(&password), &iface)
+                         .await
+                         .is_ok();
+ 
+                     let status = Some(NetworkManagerEvent::RequestResponse {
+-                        req: NetworkManagerRequest::Password(ssid.clone(), password.clone()),
++                        req: NetworkManagerRequest::Password(
++                            ssid.clone(),
++                            password.clone(),
++                            iface.clone(),
++                        ),
+                         success,
+                         state: NetworkManagerState::new(&conn).await.unwrap_or_default(),
+                     });
+@@ -184,25 +188,29 @@ async fn start_listening(
+                     } else {
+                         _ = output
+                             .send(NetworkManagerEvent::RequestResponse {
+-                                req: NetworkManagerRequest::Password(ssid, password),
++                                req: NetworkManagerRequest::Password(ssid, password, iface),
+                                 success: false,
+                                 state: NetworkManagerState::new(&conn).await.unwrap_or_default(),
+                             })
+                             .await;
+                     }
+                 }
+-                Some(NetworkManagerRequest::SelectAccessPoint(ssid)) => {
++                Some(NetworkManagerRequest::SelectAccessPoint(ssid, iface)) => {
+                     let state = NetworkManagerState::new(&conn).await.unwrap_or_default();
+-                    let success = if let Err(err) = state.connect_wifi(&conn, &ssid, None).await {
+-                        tracing::error!("Failed to connect to access point: {:?}", err);
+-                        false
+-                    } else {
+-                        true
+-                    };
++                    let success =
++                        if let Err(err) = state.connect_wifi(&conn, &ssid, None, &iface).await {
++                            tracing::error!("Failed to connect to access point: {:?}", err);
++                            false
++                        } else {
++                            true
++                        };
+ 
+                     _ = output
+                         .send(NetworkManagerEvent::RequestResponse {
+-                            req: NetworkManagerRequest::SelectAccessPoint(ssid.clone()),
++                            req: NetworkManagerRequest::SelectAccessPoint(
++                                ssid.clone(),
++                                iface.clone(),
++                            ),
+                             success,
+                             state: NetworkManagerState::new(&conn).await.unwrap_or_default(),
+                         })
+@@ -260,9 +268,9 @@ async fn start_listening(
+ pub enum NetworkManagerRequest {
+     SetAirplaneMode(bool),
+     SetWiFi(bool),
+-    SelectAccessPoint(String),
++    SelectAccessPoint(String, String),
+     Disconnect(String),
+-    Password(String, String),
++    Password(String, String, String),
+     Forget(String),
+     Reload,
+ }
+@@ -401,6 +409,7 @@ impl NetworkManagerState {
+         conn: &Connection,
+         ssid: &str,
+         password: Option<&str>,
++        iface: &str,
+     ) -> anyhow::Result<()> {
+         let nm = NetworkManager::new(conn).await?;
+ 
+@@ -417,7 +426,7 @@ impl NetworkManagerState {
+         let Some(ap) = self
+             .wireless_access_points
+             .iter()
+-            .find(|ap| ap.ssid == ssid)
++            .find(|ap| ap.ssid == ssid && ap.interface == iface)
+         else {
+             return Err(anyhow::anyhow!("Access point not found"));
+         };
+@@ -431,6 +440,7 @@ impl NetworkManagerState {
+                 "connection",
+                 HashMap::from([
+                     ("id", Value::Str(ssid.into())),
++                    ("iface", Value::Str(iface.into())),
+                     ("type", Value::Str("802-11-wireless".into())),
+                 ]),
+             ),
+@@ -454,6 +464,9 @@ impl NetworkManagerState {
+             ) {
+                 continue;
+             }
++            if device.interface().await.unwrap_or("".to_string()) != iface {
++                continue;
++            }
+ 
+             let s = NetworkManagerSettings::new(conn).await?;
+             let known_conns = s.list_connections().await.unwrap_or_default();

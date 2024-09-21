@@ -1,0 +1,51 @@
+diff --git a/data/com.system76.PowerDaemon.service b/data/com.system76.PowerDaemon.service
+index d7118abd..2d22b3ff 100644
+--- a/data/com.system76.PowerDaemon.service
++++ b/data/com.system76.PowerDaemon.service
+@@ -1,12 +1,10 @@
+-[Unit]
+-Description=System76 Power Daemon
+-
+-[Service]
+-ExecStart=/usr/bin/system76-power daemon
+-Restart=on-failure
+-Type=dbus
+-BusName=com.system76.PowerDaemon
+-
+-[Install]
+-WantedBy=multi-user.target
+-Alias=system76-power.service
+\ No newline at end of file
++#  SPDX-License-Identifier: GPL-3.0-or-later
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 3 as published by
++# the Free Software Foundation.
++ 
++[D-BUS Service]
++Name=com.system76.PowerDaemon
++Exec=/usr/bin/system76-power daemon
++User=root
+
+diff --git a/Makefile b/Makefile
+index 03064794..0bfa7fe9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -34,7 +34,7 @@ distclean:
+ install: all
+ 	install -D -m 0644 "data/$(ID).conf" "$(DESTDIR)$(datadir)/dbus-1/system.d/$(ID).conf"
+ 	install -D -m 0644 "data/$(ID).policy" "$(DESTDIR)$(datadir)/polkit-1/actions/$(ID).policy"
+-	install -D -m 0644 "data/$(ID).service" "$(DESTDIR)$(libdir)/systemd/system/$(ID).service"
++	install -D -m 0644 "data/$(ID).service" "$(DESTDIR)$(datadir)/dbus-1/system-services/$(ID).service"
+ 	install -D -m 0644 "data/$(ID).xml" "$(DESTDIR)$(datadir)/dbus-1/interfaces/$(ID).xml"
+ 	install -D -m 0755 "target/release/$(BIN)" "$(DESTDIR)$(bindir)/$(BIN)"
+ 
+@@ -43,7 +43,7 @@ uninstall:
+ 	rm -f "$(DESTDIR)$(datadir)/dbus-1/interfaces/$(ID).xml"
+ 	rm -f "$(DESTDIR)$(datadir)/dbus-1/system.d/$(ID).conf"
+ 	rm -f "$(DESTDIR)$(datadir)/polkit-1/actions/$(ID).policy"
+-	rm -f "$(DESTDIR)$(libdir)/systemd/system/$(ID).service"
++	rm -f "$(DESTDIR)$(datadir)/dbus-1/system-services/$(ID).service"
+ 
+ update:
+ 	cargo update

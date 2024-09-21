@@ -1,0 +1,32 @@
+diff --git a/data/cosmic.desktop b/data/cosmic.desktop
+index 3d288c5a..e4508994 100644
+--- a/data/cosmic.desktop
++++ b/data/cosmic.desktop
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ Name=Cosmic
+ Commment=This session logs you into Cosmic
+-Exec=/usr/bin/cosmic-service
++Exec=cosmic-comp
+ Type=Application
+ DesktopNames=pop:COSMIC
+-X-GDM-SessionRegisters=false
+\ No newline at end of file
++X-GDM-SessionRegisters=false
+
+diff --git a/src/main.rs b/src/main.rs
+index 4c9c4860..f5b679e6 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -87,6 +87,11 @@ fn main() -> Result<()> {
+     logger::init_logger()?;
+     info!("Cosmic starting up!");
+ 
++    // Advise xdg-desktop-portal which *-portals.conf to load
++    std::env::set_var("XDG_CURRENT_DESKTOP", "cosmic");
++    // Mimic wlroots, used by https://github.com/qt/qtbase/commit/4b4870a12cd9
++    std::env::set_var("XDG_SESSION_TYPE", "wayland");
++
+     #[cfg(feature = "profile-with-tracy")]
+     profiling::tracy_client::Client::start();
+     profiling::register_thread!("Main Thread");

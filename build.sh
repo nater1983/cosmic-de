@@ -2,8 +2,25 @@
 
 echo "Building the Cosmic Desktop Environment on Slackware:"
 
+# Ensure /var/cache/cosmic exists
+if [ ! -d /var/cache/cosmic ]; then
+  echo "Directory /var/cache/cosmic does not exist. Creating it..."
+  mkdir -p /var/cache/cosmic
+  if [ $? -ne 0 ]; then
+    echo "Failed to create /var/cache/cosmic"
+    exit 1
+  fi
+else
+  echo "Directory /var/cache/cosmic already exists."
+fi
+
 # Array of directories
 directories=(
+  "just"
+  "switcheroo-control"
+  "seatd"
+  "geoclue2"
+  "fira-fonts"
   "cosmic-applets"
   "cosmic-applibrary"
   "cosmic-bg"
@@ -12,6 +29,7 @@ directories=(
   "cosmic-files"
   "cosmic-greeter"
   "cosmic-icons"
+  "pop-icon-theme"
   "cosmic-launcher"
   "cosmic-notifications"
   "cosmic-osd"
@@ -24,15 +42,10 @@ directories=(
   "cosmic-term"
   "cosmic-wallpapers"
   "cosmic-workspaces-epoch"
-  "fira-fonts"
-  "just"
-  "pop-icon-theme"
-  "sddm-sugar-candy"
-  "seatd"
-  "switcheroo-control"
   "system76-fonts"
   "system76-power"
   "xdg-desktop-portal-cosmic"
+  "sddm-sugar-candy"
 )
 
 # Iterate through each directory, build, and install the packages

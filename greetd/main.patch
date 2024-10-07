@@ -1,0 +1,38 @@
+diff --git a/config.toml b/config.toml
+index c323af2..cc84fbc 100644
+--- a/config.toml
++++ b/config.toml
+@@ -1,14 +1,14 @@
+ [terminal]
+ # The VT to run the greeter on. Can be "next", "current" or a number
+ # designating the VT.
+-vt = 1
++vt = 7
+ 
+ # The default session, also known as the greeter.
+ [default_session]
+ 
+ # `agreety` is the bundled agetty/login-lookalike. You can replace `/bin/sh`
+ # with whatever you want started, such as `sway`.
+-command = "agreety --cmd /bin/sh"
++command = "agreety --cmd start-cosmic"
+ 
+ # The user to run the command as. The privileges this user must have depends
+ # on the greeter. A graphical greeter may for example require the user to be
+
+diff --git a/Cargo.lock b/Cargo.lock
+index d21f859..30b621d 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -154,9 +154,9 @@ checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.153"
++version = "0.2.155"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
++checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
+ 
+ [[package]]
+ name = "memchr"

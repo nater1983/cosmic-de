@@ -1,8 +1,8 @@
 #!/bin/bash
-
-# Slackware build script for cosmic-files
-
-# Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
+#
+# Slackware build script for greetd
+#
+# Copyright 2023-2024 Jay Lanagan (j@lngn.net), Detroit, MI, USA.
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -11,7 +11,7 @@
 # 1. Redistributions of this script must retain the above copyright
 #    notice, this list of conditions and the following disclaimer.
 #
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
 # EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -22,15 +22,16 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-files/archive/e997bbbc1b642cd1cfd2f08b92df2c5be5657719/cosmic-files-e997bbbc1b642cd1cfd2f08b92df2c5be5657719.tar.gz
+wget -c https://github.com/kennylevinsen/greetd/archive/0.10.3/greetd-0.10.3.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=cosmic-files
-VERSION=20241005.e997bbb
-_commit=e997bbbc1b642cd1cfd2f08b92df2c5be5657719
-TAG=_cosmic
+PRGNAM=greetd
+PRGUID=greeter
+PRGGID=greeter
+VERSION=${VERSION:-0.10.3}
 BUILD=${BUILD:-1}
+TAG=${TAG:-_cosmic}
 PKGTYPE=${PKGTYPE:-txz}
 
 if [ -z "$ARCH" ]; then
@@ -53,23 +54,23 @@ OUTPUT=${OUTPUT:-/var/cache/cosmic}
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
-  CARGOTARGET="--target i586-unknown-linux-gnu"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
-  CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
-  CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
   SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
-  CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
-  CARGOTARGET=""
+fi
+
+if ! grep -q ^greeter: /etc/group ; then
+  groupadd -g 381 greeter
+  useradd -d /var/lib/greetd -u 381 -g greeter -G video -s /bin/false greeter
 fi
 
 set -e
@@ -77,31 +78,46 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$_commit
-tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
-cd $PRGNAM-$_commit || exit 1
-sed -i 's/debug = true/debug = false/g' Cargo.toml
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.?z
+cd $PRGNAM-$VERSION
+patch -Np1 -i $CWD/main.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
   -o -perm 511 \) -exec chmod 755 {} \; -o \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
-  -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
+ -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-export VERGEN_GIT_COMMIT_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S %z')"
-export VERGEN_GIT_SHA=$_commit
-export RUSTUP_TOOLCHAIN=stable
-cargo fetch
-RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
-just build-release --frozen
-just rootdir=$PKG install
+cargo build --release --all-features
+make -C man all
 
-find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
-  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+install -Dm0755 -t "$PKG/usr/bin/" "target/release/$PRGNAM"
+install -Dm0755 -t "$PKG/usr/bin/" "target/release/fakegreet"
+install -Dm0755 -t "$PKG/usr/bin/" "target/release/agreety"
+install -Dm0644 -t "$PKG/etc/$PRGNAM/" config.toml
+install -Dm0644 "$CWD/$PRGNAM.pam" "$PKG/etc/pam.d/$PRGNAM"
+make -C man DESTDIR="$PKG" MANDIR=/usr/man PREFIX=/usr install
+
+cd $TMP/$PRGNAM-$VERSION
+
+find $PKG | xargs file | egrep "ELF.*executable" | cut -f 1 -d : \
+          | xargs strip --strip-unneeded 2> /dev/null
+
+# move this file to 'rc.4.local' for Slackware to boot directly
+# to greetd from init level 4 startup
+mkdir -p $PKG/etc/rc.d
+install -Dm0755  "$CWD/rc.4.$PRGNAM" "$PKG/etc/rc.d/rc.4.$PRGNAM"
+
+# create this in pkg to ensure it exists with proper perms
+mkdir -p $PKG/var/lib/$PRGNAM
+chown -R $PRGUID:$PRGGID $PKG/var/lib/$PRGNAM
+
+gzip -9 $PKG/usr/man/man?/*
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a LICENSE README.md \
-    $PKG/usr/doc/$PRGNAM-$VERSION
+      $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install

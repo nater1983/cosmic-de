@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-panel/archive/4fedcbfc3574600b58de6da6c2401c92264537bd/cosmic-panel-4fedcbfc3574600b58de6da6c2401c92264537bd.tar.gz
+wget -c https://github.com/pop-os/cosmic-panel/archive/0ce85da198f02f94ad75441e64c0e165c41eb4ae/cosmic-panel-0ce85da198f02f94ad75441e64c0e165c41eb4ae.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-panel
-VERSION=20240911.4fedcbf
-_commit=4fedcbfc3574600b58de6da6c2401c92264537bd
+VERSION=20240927.0ce85da
+_commit=0ce85da198f02f94ad75441e64c0e165c41eb4ae
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

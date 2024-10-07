@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# /etc/rc.d/rc.4.greetd
+# Rename this script /etc/rc.d/rc.4.local
+# and make it executable and it will be used instead:
+
+cfgfile="/etc/greetd/config.toml"
+
+# Check if greetd exists and is executable
+if [ -x /usr/bin/greetd ]; then
+  # Ensure the greetd user home directory exists and has correct permissions
+  if id -u greeter >/dev/null 2>&1; then
+    homedir="$(getent passwd greeter | cut -d: -f6)"
+    if [ -d "$homedir" ]; then
+      chmod 750 "$homedir"
+      chown greeter:greeter "$homedir"
+    else
+      echo "Home directory for greetd does not exist"
+      exit 1
+    fi
+  fi
+
+  # Check if the config file exists
+  if [ -f "$cfgfile" ]; then
+    # Start greetd using the configuration file
+    exec /usr/bin/greetd --config "$cfgfile"
+  else
+    echo "Config file $cfgfile not found"
+    exit 1
+  fi
+else
+  echo "/usr/bin/greetd is not executable"
+  exit 1
+fi
+
+# EOF

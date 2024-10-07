@@ -22,14 +22,14 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/icon-theme/archive/3126c6a3f605923c648e74e7276b9de59d4ab67a/icon-theme-3126c6a3f605923c648e74e7276b9de59d4ab67a.tar.gz
+wget -c https://github.com/pop-os/icon-theme/archive/1a575a8e99b4ae629b9b16543a3a04d148632ba9/icon-theme-1a575a8e99b4ae629b9b16543a3a04d148632ba9.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=pop-icon-theme
 SRCNAM=icon-theme
-VERSION=20230623.3126c6a
-_commit=3126c6a3f605923c648e74e7276b9de59d4ab67a
+VERSION=20241001.1a575a8
+_commit=1a575a8e99b4ae629b9b16543a3a04d148632ba9
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

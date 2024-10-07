@@ -12,6 +12,7 @@ declare -A repos=(
   ["cosmic-notifications"]="cosmic-notifications"
   ["cosmic-osd"]="cosmic-osd"
   ["cosmic-panel"]="cosmic-panel"
+  ["cosmic-player"]="cosmic-player"
   ["cosmic-randr"]="cosmic-randr"
   ["cosmic-reader"]="cosmic-reader"
   ["cosmic-screenshot"]="cosmic-screenshot"

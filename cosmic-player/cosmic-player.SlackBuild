@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-player/archive/652ea5b17146d44afb01d191af3502685b3a07cb/cosmic-player-652ea5b17146d44afb01d191af3502685b3a07cb.tar.gz
+wget -c https://github.com/pop-os/cosmic-player/archive/d8ee67cc7f9adc7f6b6125033c416bade69a8412/cosmic-player-d8ee67cc7f9adc7f6b6125033c416bade69a8412.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-player
-VERSION=20241002.652ea5b
-_commit=652ea5b17146d44afb01d191af3502685b3a07cb
+VERSION=20241014.d8ee67c
+_commit=d8ee67cc7f9adc7f6b6125033c416bade69a8412
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -82,8 +82,10 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
+export VERGEN_GIT_COMMIT_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S %z')"
+export VERGEN_GIT_SHA=$_commit
 export RUSTUP_TOOLCHAIN=stable
-cargo fetch --locked
+cargo fetch
 RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
 just build-release --frozen
 just rootdir=$PKG install
@@ -123,7 +125,7 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-#zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

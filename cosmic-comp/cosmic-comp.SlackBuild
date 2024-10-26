@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-comp/archive/a96394f7a6fd1d96289e319650e3f17b873cbfb0/cosmic-comp-a96394f7a6fd1d96289e319650e3f17b873cbfb0.tar.gz
+wget -c https://github.com/pop-os/cosmic-comp/archive/eb64fdaf8fe4f5e6957a35e74004b183acc905c8/cosmic-comp-eb64fdaf8fe4f5e6957a35e74004b183acc905c8.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-comp
-VERSION=20241002.a96394f
-_commit=a96394f7a6fd1d96289e319650e3f17b873cbfb0
+VERSION=20241025.eb64fda
+_commit=eb64fdaf8fe4f5e6957a35e74004b183acc905c8
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -87,7 +87,6 @@ find -L . \
   -o -perm 511 \) -exec chmod 755 {} \; -o \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
-
 
 export RUSTUP_TOOLCHAIN=stable
 cargo fetch --locked

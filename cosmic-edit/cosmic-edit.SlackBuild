@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://reddoglinux.ddns.net/distfile/cosmic-edit-18554f3ac732786e10a7724167cb297d1a83e584.tar.xz
+wget -c https://reddoglinux.ddns.net/distfile/cosmic-edit-5b0d05d2cbc1a92e262e582c38b7fef2016499d0.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-edit
-VERSION=20241006.18554f3
-_commit=18554f3ac732786e10a7724167cb297d1a83e584
+VERSION=20241022.5b0d05d
+_commit=5b0d05d2cbc1a92e262e582c38b7fef2016499d0
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

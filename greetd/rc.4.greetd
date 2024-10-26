@@ -4,7 +4,17 @@
 # Rename this script /etc/rc.d/rc.4.local
 # and make it executable and it will be used instead:
 
-cfgfile="/etc/greetd/config.toml"
+cfgfile="/etc/greetd/cosmic-greeter.toml"
+
+# Check if cosmic-greeter-daemon exists and is executable
+if [ -x /usr/bin/cosmic-greeter-daemon ]; then
+  echo "Starting cosmic-greeter-daemon..."
+  /usr/bin/cosmic-greeter-daemon &
+  sleep 1  # Wait a moment to ensure it's running
+else
+  echo "/usr/bin/cosmic-greeter-daemon is not executable"
+  exit 1
+fi
 
 # Check if greetd exists and is executable
 if [ -x /usr/bin/greetd ]; then

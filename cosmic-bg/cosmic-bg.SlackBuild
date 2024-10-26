@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-bg/archive/584f6b3c0454396df25d36c6c2b59b018946e81e/cosmic-bg-584f6b3c0454396df25d36c6c2b59b018946e81e.tar.gz
+wget -c https://github.com/pop-os/cosmic-bg/archive/fd44edf79b5ffbced27540fd222e37aa05daeeba/cosmic-bg-fd44edf79b5ffbced27540fd222e37aa05daeeba.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-bg
-VERSION=20240907.584f6b3
-_commit=584f6b3c0454396df25d36c6c2b59b018946e81e
+VERSION=20241009.fd44edf
+_commit=fd44edf79b5ffbced27540fd222e37aa05daeeba
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

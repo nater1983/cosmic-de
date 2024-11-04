@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Slackware build script for cosmic-notifications
+# Slackware build script for cosmic-idle
 
 # Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
 # All rights reserved.
@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-notifications/archive/980b9621332502af4754c837f54e514282581c2f/cosmic-notifications-980b9621332502af4754c837f54e514282581c2f.tar.gz
+wget -c https://github.com/pop-os/cosmic-idle/archive/08c1cf318e91831b6cbfd2c94d2fafbedb90919f/cosmic-idle-08c1cf318e91831b6cbfd2c94d2fafbedb90919f.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=cosmic-notifications
-VERSION=20241024.980b962
-_commit=980b9621332502af4754c837f54e514282581c2f
+PRGNAM=cosmic-idle
+VERSION=20241030.08c1cf3
+_commit=08c1cf318e91831b6cbfd2c94d2fafbedb90919f
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -53,23 +53,18 @@ OUTPUT=${OUTPUT:-/var/cache/cosmic}
 if [ "$ARCH" = "i586" ]; then
   SLKCFLAGS="-O2 -march=i586 -mtune=i686"
   LIBDIRSUFFIX=""
-  CARGOTARGET="--target i586-unknown-linux-gnu"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
   LIBDIRSUFFIX=""
-  CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
-  CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
   SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
   LIBDIRSUFFIX="64"
-  CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
   SLKCFLAGS="-O2"
   LIBDIRSUFFIX=""
-  CARGOTARGET=""
 fi
 
 set -e
@@ -87,9 +82,10 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
+export VERGEN_GIT_COMMIT_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S %z')"
+export VERGEN_GIT_SHA=$_commit
 export RUSTUP_TOOLCHAIN=stable
 cargo fetch --locked
-sed -i 's/lld/mold/g' justfile
 RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
 just build-release --frozen
 just rootdir=$PKG install
@@ -97,31 +93,8 @@ just rootdir=$PKG install
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
-# Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-  ( cd $PKG/usr/man
-    for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.*
-      )
-    done
-  )
-fi
-
-# Compress info files, if any:
-if [ -d $PKG/usr/info ]; then
-  ( cd $PKG/usr/info
-    rm -f dir
-    gzip -9 *
-  )
-fi
-
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a LICENSE.md README.md \
+cp -a LICENSE \
     $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 

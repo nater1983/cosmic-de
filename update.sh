@@ -20,6 +20,7 @@ declare -A repos=(
   ["cosmic-settings-daemon"]="cosmic-settings-daemon"
   ["cosmic-settings"]="cosmic-settings"
   ["cosmic-term"]="cosmic-term"
+  ["cosmic-idle"]="cosmic-idle"
   ["cosmic-workspaces-epoch"]="cosmic-workspaces-epoch"
   ["pop-gtk-theme"]="gtk-theme" 
   ["pop-icon-theme"]="icon-theme"  # Directory name differs from repository name

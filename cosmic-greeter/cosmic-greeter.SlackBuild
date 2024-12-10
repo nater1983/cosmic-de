@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://reddoglinux.ddns.net/distfile/cosmic-greeter-7366808e8ca59c5ba8c4cfdf39dec26e52ca82c1.tar.xz
+wget -c https://reddoglinux.ddns.net/distfile/cosmic-greeter-39de7578466e60a2a744144465f78de8caaceffa.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-greeter
-VERSION=20241014.7366808
-_commit=7366808e8ca59c5ba8c4cfdf39dec26e52ca82c1
+VERSION=20241107.39de757
+_commit=39de7578466e60a2a744144465f78de8caaceffa
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -98,6 +98,11 @@ just rootdir=$PKG install
 
 install -Dm644 "$PRGNAM.toml" -t "$PKG/etc/greetd/"
 install -vDm644 debian/"$PRGNAM"-daemon.service "$PKG/usr/share/dbus-1/system-services/com.system76.CosmicGreeter.service"
+install -Dm0644 "$CWD/$PRGNAM.pam" "$PKG/etc/pam.d/$PRGNAM"
+
+# create this in pkg to ensure it exists with proper perms
+mkdir -p $PKG/var/lib/$PRGNAM
+chown -R $PRGNAM:$PRGNAM $PKG/var/lib/$PRGNAM
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
@@ -109,6 +114,7 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

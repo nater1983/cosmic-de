@@ -2,45 +2,69 @@
 
 # /etc/rc.d/rc.4.greetd
 # Rename this script /etc/rc.d/rc.4.local
-# and make it executable and it will be used instead:
+# and make it executable, and it will be used instead.
 
+LOGFILE="/var/log/greetd.log"
 cfgfile="/etc/greetd/cosmic-greeter.toml"
+# Uncomment the next line to use the default greetd config
+# cfgfile="/etc/greetd/config.toml"
 
-# Check if cosmic-greeter-daemon exists and is executable
-if [ -x /usr/bin/cosmic-greeter-daemon ]; then
-  echo "Starting cosmic-greeter-daemon..."
+log() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$LOGFILE"
+}
+
+# If both cosmic-greeter-daemon and greetd are available
+if [ -x /usr/bin/cosmic-greeter-daemon ] && [ -x /usr/bin/greetd ]; then
+  log "Starting cosmic-greeter-daemon..."
   /usr/bin/cosmic-greeter-daemon &
-  sleep 1  # Wait a moment to ensure it's running
-else
-  echo "/usr/bin/cosmic-greeter-daemon is not executable"
-  exit 1
-fi
+  sleep 1  # Allow some startup time
 
-# Check if greetd exists and is executable
-if [ -x /usr/bin/greetd ]; then
-  # Ensure the greetd user home directory exists and has correct permissions
+  # Check and set permissions for greeter and cosmic-greeter users
+  for user in greeter cosmic-greeter; do
+    if id -u "$user" >/dev/null 2>&1; then
+      homedir="$(getent passwd "$user" | cut -d: -f6)"
+      if [ -n "$homedir" ] && [ -d "$homedir" ]; then
+        chmod 750 "$homedir"
+        chown "$user:$user" "$homedir"
+        log "Set permissions for $user home directory: $homedir"
+      else
+        log "ERROR: Home directory for $user does not exist or is invalid: $homedir"
+        exit 2
+      fi
+    else
+      log "ERROR: User $user does not exist"
+      exit 3
+    fi
+  done
+
+# If only greetd is available
+elif [ -x /usr/bin/greetd ]; then
+  log "cosmic-greeter-daemon is unavailable. Using greetd only."
+
+  # Check and set permissions for the greeter user
   if id -u greeter >/dev/null 2>&1; then
     homedir="$(getent passwd greeter | cut -d: -f6)"
-    if [ -d "$homedir" ]; then
+    if [ -n "$homedir" ] && [ -d "$homedir" ]; then
       chmod 750 "$homedir"
-      chown greeter:greeter "$homedir"
+      chown "greeter:greeter" "$homedir"
+      log "Set permissions for greetd home directory: $homedir"
     else
-      echo "Home directory for greetd does not exist"
-      exit 1
+      log "ERROR: Home directory for greetd does not exist or is invalid: $homedir"
+      exit 2
     fi
-  fi
-
-  # Check if the config file exists
-  if [ -f "$cfgfile" ]; then
-    # Start greetd using the configuration file
-    exec /usr/bin/greetd --config "$cfgfile"
   else
-    echo "Config file $cfgfile not found"
-    exit 1
+    log "ERROR: User greeter does not exist"
+    exit 3
   fi
+fi
+
+# Verify the config file and start greetd
+if [ -f "$cfgfile" ]; then
+  log "Starting greetd with configuration file $cfgfile..."
+  exec /usr/bin/greetd --config "$cfgfile" >> "$LOGFILE" 2>&1
 else
-  echo "/usr/bin/greetd is not executable"
-  exit 1
+  log "ERROR: Config file $cfgfile not found"
+  exit 4
 fi
 
 # EOF

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Slackware build script for cosmic-applets
+# Slackware build script for launcher
 
 # Copyright 2024 Nathaniel Russell <naterussell83@gmail.com>
 # All rights reserved.
@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-applets/archive/104a608cf1d55b5b8696ada431e77b96602242aa/cosmic-applets-104a608cf1d55b5b8696ada431e77b96602242aa.tar.gz
+wget -c https://github.com/pop-os/launcher/archive/c37c2a3c6a0b0167267140f2792c49ccc0c15767/launcher-c37c2a3c6a0b0167267140f2792c49ccc0c15767.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=cosmic-applets
-VERSION=20241204.104a608
-_commit=104a608cf1d55b5b8696ada431e77b96602242aa
+PRGNAM=launcher
+VERSION=20241209.c37c2a3
+_commit=c37c2a3c6a0b0167267140f2792c49ccc0c15767
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -59,11 +59,11 @@ elif [ "$ARCH" = "i686" ]; then
   LIBDIRSUFFIX=""
   CARGOTARGET="--target i686-unknown-linux-gnu"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2 -march=x86-64 -mtune=generic -fPIC"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target x86_64-unknown-linux-gnu"
 elif [ "$ARCH" = "aarch64" ]; then
-  SLKCFLAGS="-O2 -march=armv8-a -mtune=generic -fPIC"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
   CARGOTARGET="--target aarch64-unknown-linux-gnu"
 else
@@ -80,7 +80,6 @@ cd $TMP
 rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
-sed -i 's/lto = "fat"/lto = "thin"/g' Cargo.toml
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -88,23 +87,52 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
+sed -i "s|base-dir / 'lib'|base-dir / 'lib${LIBDIRSUFFIX}'|g" justfile
+
+export VERGEN_GIT_COMMIT_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S %z')"
+export VERGEN_GIT_SHA=$_commit
 export RUSTUP_TOOLCHAIN=stable
 cargo fetch --locked
 RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
 just build-release --frozen
 just rootdir=$PKG install
 
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+  ( cd $PKG/usr/man
+    for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.*
+      )
+    done
+  )
+fi
+
+# Compress info files, if any:
+if [ -d $PKG/usr/info ]; then
+  ( cd $PKG/usr/info
+    rm -f dir
+    gzip -9 *
+  )
+fi
+
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a LICENSE \
+cp -a LICENSE README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+#zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
 if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi

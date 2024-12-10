@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-settings/archive/f93aa04b7b97c53de24b2f2d96fcd8f72cbf1c1e/cosmic-settings-f93aa04b7b97c53de24b2f2d96fcd8f72cbf1c1e.tar.gz
+wget -c https://github.com/pop-os/cosmic-settings/archive/00b8b2bb964637da3a4201cb0dabe4e4a23c2050/cosmic-settings-00b8b2bb964637da3a4201cb0dabe4e4a23c2050.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-settings
-VERSION=20241102.f93aa04
-_commit=f93aa04b7b97c53de24b2f2d96fcd8f72cbf1c1e
+VERSION=20241209.00b8b2b
+_commit=00b8b2bb964637da3a4201cb0dabe4e4a23c2050
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-idle/archive/08c1cf318e91831b6cbfd2c94d2fafbedb90919f/cosmic-idle-08c1cf318e91831b6cbfd2c94d2fafbedb90919f.tar.gz
+wget -c https://github.com/pop-os/cosmic-idle/archive/eaa09a6fef304ddc236709c111bb7b0c16883f7d/cosmic-idle-eaa09a6fef304ddc236709c111bb7b0c16883f7d.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-idle
-VERSION=20241030.08c1cf3
-_commit=08c1cf318e91831b6cbfd2c94d2fafbedb90919f
+VERSION=20241115.eaa09a6
+_commit=eaa09a6fef304ddc236709c111bb7b0c16883f7d
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

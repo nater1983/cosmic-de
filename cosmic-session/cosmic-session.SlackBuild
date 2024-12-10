@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-session/archive/2612282fcfcc2c12c8a7227631cb936d17edc494/cosmic-session-2612282fcfcc2c12c8a7227631cb936d17edc494.tar.gz
+wget -c https://github.com/pop-os/cosmic-session/archive/78316ba39c53fccad448c7a2a48fd898b3ab9d86/cosmic-session-78316ba39c53fccad448c7a2a48fd898b3ab9d86.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-session
-VERSION=20241101.2612282
-_commit=2612282fcfcc2c12c8a7227631cb936d17edc494
+VERSION=20241206.78316ba
+_commit=78316ba39c53fccad448c7a2a48fd898b3ab9d86
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -92,6 +92,8 @@ RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
 cargo build --release --frozen --no-default-features --offline
 sed -i 's|{{applicationdir}}/cosmic-mimeapps.list|{{applicationdir}}/mimeapps.list|g' Justfile
 just rootdir=$PKG install
+
+install -vDm 0644 data/dconf/profile/cosmic -t $PKG/usr/share/dconf/profile/
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true

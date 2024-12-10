@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-settings-daemon/archive/2f17f33875315a4cf463f82c5dceca4d83a75bfd/cosmic-settings-daemon-2f17f33875315a4cf463f82c5dceca4d83a75bfd.tar.gz
+wget -c https://github.com/pop-os/cosmic-settings-daemon/archive/e87f5859a2e932ef14746affd01cc67ed4f93cf1/cosmic-settings-daemon-e87f5859a2e932ef14746affd01cc67ed4f93cf1.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-settings-daemon
-VERSION=20240926.2f17f33
-_commit=2f17f33875315a4cf463f82c5dceca4d83a75bfd
+VERSION=20241209.e87f585
+_commit=e87f5859a2e932ef14746affd01cc67ed4f93cf1
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -85,6 +85,7 @@ find -L . \
 cargo fetch --locked
 sed 's/libexec/lib${LIBDIRSUFFIX}/g' -i Makefile src/main.rs
 sed 's/sudo/wheel/g' -i data/polkit-1/rules.d/cosmic-settings-daemon.rules
+sed -i "s|adw-gtk3|Adwaita|g" src/theme.rs
 
 RUSTFLAGS+=" -C link-arg=-fuse-ld=lld"
 make ARGS+=" --frozen --release"

@@ -22,6 +22,7 @@ declare -A repos=(
   ["cosmic-term"]="cosmic-term"
   ["cosmic-idle"]="cosmic-idle"
   ["cosmic-workspaces-epoch"]="cosmic-workspaces-epoch"
+  ["launcher"]="launcher" 
   ["pop-gtk-theme"]="gtk-theme" 
   ["pop-icon-theme"]="icon-theme"  # Directory name differs from repository name
   ["system76-fonts"]="fonts"

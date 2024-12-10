@@ -8,14 +8,12 @@ index 7a57354..1980976 100644
 +vt = "7"
  
  [general]
--service = "cosmic-greeter"
-+service = "greetd"
+ service = "cosmic-greeter"
  
  [default_session]
 -command = "cosmic-comp systemd-cat -t cosmic-greeter cosmic-greeter"
--user = "cosmic-greeter"
-+command = "agreety --cmd start-cosmic"
-+user = "greeter"
++command = "cosmic-comp cosmic-greeter"
+ user = "cosmic-greeter"
 
 diff --git a/debian/cosmic-greeter-daemon.service b/debian/cosmic-greeter-daemon.service
 index a567119..03c67db 100644

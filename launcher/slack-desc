@@ -1,0 +1,20 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+        |-----handy-ruler------------------------------------------------------|
+launcher: launcher (Modular IPC-based desktop launcher service)
+launcher:
+launcher: Modular IPC-based desktop launcher service, written in Rust. Desktop
+launcher: launchers may interface with this service via spawning the
+launcher: pop-launcher process and communicating to it via JSON IPC over the
+launcher: stdin and stdout pipes. The launcher service will also spawn plugins
+launcher: found in plugin directories on demand, based on the queries sent to
+launcher: the service. Using IPC enables each plugin to isolate their data
+launcher: from other plugin processes and frontends that are interacting with
+launcher: them.
+launcher: Homepage: https://github.com/pop-os/launcher
+ 

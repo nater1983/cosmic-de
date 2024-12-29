@@ -22,13 +22,13 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-term/archive/77be96e1c20039511e29da4ba5b8ce457e098f3b/cosmic-term-77be96e1c20039511e29da4ba5b8ce457e098f3b.tar.gz
+wget -c https://github.com/pop-os/cosmic-term/archive/75e1082260ca264f2c78be3afae5c6ed975351fc/cosmic-term-75e1082260ca264f2c78be3afae5c6ed975351fc.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-term
-VERSION=20241203.77be96e
-_commit=77be96e1c20039511e29da4ba5b8ce457e098f3b
+VERSION=20241222.75e1082
+_commit=75e1082260ca264f2c78be3afae5c6ed975351fc
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

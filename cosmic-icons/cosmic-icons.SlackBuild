@@ -22,13 +22,13 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-icons/archive/3fdc2175c145e00d798f98e81d5c4d493f0a2a8c/cosmic-icons-3fdc2175c145e00d798f98e81d5c4d493f0a2a8c.tar.gz
+wget -c https://github.com/pop-os/cosmic-icons/archive/52ad55cba5272630f345e14bee69c9fbe7aa98c4/cosmic-icons-52ad55cba5272630f345e14bee69c9fbe7aa98c4.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-icons
-VERSION=20241002.3fdc217
-_commit=3fdc2175c145e00d798f98e81d5c4d493f0a2a8c
+VERSION=20250110.52ad55c
+_commit=52ad55cba5272630f345e14bee69c9fbe7aa98c4
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

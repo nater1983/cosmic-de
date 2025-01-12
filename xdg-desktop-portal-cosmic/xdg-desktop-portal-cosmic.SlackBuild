@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/xdg-desktop-portal-cosmic/archive/e7c92a7316ad5c6e0ccfa08adaae118ee8f2738f/xdg-desktop-portal-cosmic-e7c92a7316ad5c6e0ccfa08adaae118ee8f2738f.tar.gz
+wget -c https://github.com/pop-os/xdg-desktop-portal-cosmic/archive/730f32f80095b261a1553d43e65184eebe28b760/xdg-desktop-portal-cosmic-730f32f80095b261a1553d43e65184eebe28b760.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=xdg-desktop-portal-cosmic
-VERSION=20241204.e7c92a7
-_commit=e7c92a7316ad5c6e0ccfa08adaae118ee8f2738f
+VERSION=20250110.730f32f
+_commit=730f32f80095b261a1553d43e65184eebe28b760
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

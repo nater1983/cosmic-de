@@ -20,6 +20,7 @@ declare -A repos=(
   ["cosmic-settings-daemon"]="cosmic-settings-daemon"
   ["cosmic-settings"]="cosmic-settings"
   ["cosmic-term"]="cosmic-term"
+  ["cosmic-store"]="cosmic-store"
   ["cosmic-idle"]="cosmic-idle"
   ["cosmic-workspaces-epoch"]="cosmic-workspaces-epoch"
   ["launcher"]="launcher" 

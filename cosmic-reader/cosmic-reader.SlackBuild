@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-reader/archive/9f62f5455d7faea844b55f3495e12b1e47bb8111/cosmic-reader-9f62f5455d7faea844b55f3495e12b1e47bb8111.tar.gz
+wget -c https://github.com/pop-os/cosmic-reader/archive/9ea7c8513a06a7f5968db7eaa6273dd3dc411072/cosmic-reader-9ea7c8513a06a7f5968db7eaa6273dd3dc411072.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-reader
-VERSION=20241022.9f62f54
-_commit=9f62f5455d7faea844b55f3495e12b1e47bb8111
+VERSION=20250114.9ea7c85
+_commit=9ea7c8513a06a7f5968db7eaa6273dd3dc411072
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

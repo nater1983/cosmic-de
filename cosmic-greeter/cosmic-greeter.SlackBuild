@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://reddoglinux.ddns.net/distfile/cosmic-greeter-116ef799311cf87255ec4bcc1fdceaa9567f73b2.tar.xz
+wget -c https://reddoglinux.ddns.net/distfile/cosmic-greeter-5527c9b866d45baa6f0dbd55778a3f57466391ab.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-greeter
-VERSION=20250114.116ef79
-_commit=116ef799311cf87255ec4bcc1fdceaa9567f73b2
+VERSION=20250124.5527c9b
+_commit=5527c9b866d45baa6f0dbd55778a3f57466391ab
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -120,4 +120,5 @@ if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi
 
 cd $PKG
+if [ -f "$CWD/slack-required" ]; then cat "$CWD/slack-required" > "$PKG/usr/doc/$PRGNAM-$VERSION/slack-required"; fi
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE

@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-player/archive/4fee3f84fa2e4ffb3259e93e52d2afda971ce9ef/cosmic-player-4fee3f84fa2e4ffb3259e93e52d2afda971ce9ef.tar.gz
+wget -c https://github.com/pop-os/cosmic-player/archive/011c633a8a4a17b47e07ea3dabbd0a4560d7e2a8/cosmic-player-011c633a8a4a17b47e07ea3dabbd0a4560d7e2a8.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-player
-VERSION=20250119.4fee3f8
-_commit=4fee3f84fa2e4ffb3259e93e52d2afda971ce9ef
+VERSION=20250203.011c633
+_commit=011c633a8a4a17b47e07ea3dabbd0a4560d7e2a8
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -131,4 +131,5 @@ if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack
 if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi
 
 cd $PKG
+if [ -f "$CWD/slack-required" ]; then cat "$CWD/slack-required" > "$PKG/usr/doc/$PRGNAM-$VERSION/slack-required"; fi
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE

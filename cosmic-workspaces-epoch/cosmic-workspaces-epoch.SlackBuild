@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-workspaces-epoch/archive/b5d2eed7265a736d6dd88a2760e7c4fa4a432413/cosmic-workspaces-epoch-b5d2eed7265a736d6dd88a2760e7c4fa4a432413.tar.gz
+wget -c https://github.com/pop-os/cosmic-workspaces-epoch/archive/7f877f72a373514d298259ad7c6a6b3a5e10432c/cosmic-workspaces-epoch-7f877f72a373514d298259ad7c6a6b3a5e10432c.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-workspaces-epoch
-VERSION=20250206.b5d2eed
-_commit=b5d2eed7265a736d6dd88a2760e7c4fa4a432413
+VERSION=20250220.7f877f7
+_commit=7f877f72a373514d298259ad7c6a6b3a5e10432c
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

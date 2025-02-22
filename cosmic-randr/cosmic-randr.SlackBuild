@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-randr/archive/da7df14acdf18d9ae36d1fec15a8a91e0be6a192/cosmic-randr-da7df14acdf18d9ae36d1fec15a8a91e0be6a192.tar.gz
+wget -c https://github.com/pop-os/cosmic-randr/archive/c247019230c5d820dd1c3d47bc4e3c52fb03b42f/cosmic-randr-c247019230c5d820dd1c3d47bc4e3c52fb03b42f.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-randr
-VERSION=20250113.da7df14
-_commit=da7df14acdf18d9ae36d1fec15a8a91e0be6a192
+VERSION=20250220.c247019
+_commit=c247019230c5d820dd1c3d47bc4e3c52fb03b42f
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

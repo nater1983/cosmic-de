@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=FlatPak Hub
+Exec=/usr/bin/flathub
+Terminal=false
+Type=Application
+Icon=flathub
+Comment=An Universal linux app store 
+Categories=Utility;Settings;X-XFCE-SettingsDialog;X-XFCE-PersonalSettings;

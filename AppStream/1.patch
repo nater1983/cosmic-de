@@ -1,0 +1,22 @@
+From 946f5f6292c4f80236d37b13af1e92ee8e1ad6d9 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Tue, 21 Nov 2023 03:52:05 +0000
+Subject: [PATCH] Update meson.build
+
+---
+ data/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/meson.build b/data/meson.build
+index 7ae7a9b33..0276bb097 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -43,7 +43,7 @@ test('as-validate_metainfo.cli',
+ 
+ # install appstream.conf default template
+ install_data('appstream.conf',
+-             install_dir: as_data_installdir)
++             install_dir: get_option('sysconfdir'))
+ 
+ if get_option('compose')
+     ascompose_metainfo = 'org.freedesktop.appstream.compose.metainfo.xml'

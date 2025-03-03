@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Flatpak connector
+Comment=Register to Flathub
+Exec=flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+Icon=flathub
+Terminal=false
+Type=Application
+X-GNOME-Autostart-Phase=Initialization
+

@@ -1,0 +1,162 @@
+From a418b84fb6e75b3ce6e412dd5982c7006175cfe5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hubert=20Figui=C3=A8re?= <hub@figuiere.net>
+Date: Thu, 30 Nov 2023 20:58:05 -0500
+Subject: [PATCH] notification: fix a memory leak
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Hubert Figuière <hub@figuiere.net>
+---
+ src/notification.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/notification.c b/src/notification.c
+index 86210d77..3e579610 100644
+--- a/src/notification.c
++++ b/src/notification.c
+@@ -227,8 +227,10 @@ handle_add_notification (XdpImplNotification *object,
+                          const gchar *arg_id,
+                          GVariant *arg_notification)
+ {
+-  if (gtk_notifications == NULL ||
+-      g_dbus_proxy_get_name_owner (G_DBUS_PROXY (gtk_notifications)) == NULL ||
++  g_autofree char* owner = gtk_notifications != NULL ?
++    g_dbus_proxy_get_name_owner (G_DBUS_PROXY (gtk_notifications)) :
++    NULL;
++  if (owner == NULL ||
+       !g_application_id_is_valid (arg_app_id) ||
+       has_unprefixed_action (arg_notification))
+     handle_add_notification_fdo (object, invocation, arg_app_id, arg_id, arg_notification);
+
+From dcbc052bd5ba9816b6ac8d8a6b6e562a27b6685d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hubert=20Figui=C3=A8re?= <hub@figuiere.net>
+Date: Fri, 26 Jan 2024 22:07:51 -0500
+Subject: [PATCH] settings: Implement the contrast settings
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+See https://github.com/flatpak/xdg-desktop-portal/pull/1175
+
+Signed-off-by: Hubert Figuière <hub@figuiere.net>
+---
+ src/settings.c | 43 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 38 insertions(+), 5 deletions(-)
+
+diff --git a/src/settings.c b/src/settings.c
+index 5049471f..d160beb6 100644
+--- a/src/settings.c
++++ b/src/settings.c
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright © 2018 Igalia S.L.
++ * Copyright © 2024 GNOME Foundation Inc.
+  *
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Lesser General Public
+@@ -16,6 +17,7 @@
+  *
+  * Authors:
+  *       Patrick Griffis <pgriffis@igalia.com>
++ *       Hubert Figuière <hub@figuiere.net>
+  */
+ 
+ #include "config.h"
+@@ -102,6 +104,18 @@ get_color_scheme (void)
+   return g_variant_new_uint32 (color_scheme);
+ }
+ 
++static GVariant *
++get_contrast_value ()
++{
++  SettingsBundle *bundle = g_hash_table_lookup (settings, "org.gnome.desktop.a11y.interface");
++  gboolean hc = FALSE;
++
++  if (bundle && g_settings_schema_has_key (bundle->schema, "high-contrast"))
++    hc = g_settings_get_boolean (bundle->settings, "high-contrast");
++
++  return g_variant_new_uint32 (hc ? 1 : 0);
++}
++
+ static gboolean
+ settings_handle_read_all (XdpImplSettings       *object,
+                           GDBusMethodInvocation *invocation,
+@@ -155,6 +169,7 @@ settings_handle_read_all (XdpImplSettings       *object,
+ 
+       g_variant_dict_init (&dict, NULL);
+       g_variant_dict_insert_value (&dict, "color-scheme", get_color_scheme ());
++      g_variant_dict_insert_value (&dict, "contrast", get_contrast_value ());
+ 
+       g_variant_builder_add (builder, "{s@a{sv}}", "org.freedesktop.appearance", g_variant_dict_end (&dict));
+     }
+@@ -184,12 +199,20 @@ settings_handle_read (XdpImplSettings       *object,
+           return TRUE;
+         }
+     }
+-  else if (strcmp (arg_namespace, "org.freedesktop.appearance") == 0 &&
+-           strcmp (arg_key, "color-scheme") == 0)
++  else if (strcmp (arg_namespace, "org.freedesktop.appearance") == 0)
+     {
+-      g_dbus_method_invocation_return_value (invocation,
+-                                             g_variant_new ("(v)", get_color_scheme ()));
+-      return TRUE;
++      if (strcmp (arg_key, "color-scheme") == 0)
++        {
++	  g_dbus_method_invocation_return_value (invocation,
++						 g_variant_new ("(v)", get_color_scheme ()));
++	  return TRUE;
++	}
++      else if (strcmp (arg_key, "contrast") == 0)
++        {
++	  g_dbus_method_invocation_return_value (invocation,
++						 g_variant_new ("(v)", get_contrast_value ()));
++	  return TRUE;
++	}
+     }
+   else if (strcmp (arg_namespace, "org.gnome.desktop.interface") == 0 &&
+            strcmp (arg_key, "enable-animations") == 0)
+@@ -261,6 +284,16 @@ on_settings_changed (GSettings             *settings,
+     xdp_impl_settings_emit_setting_changed (user_data->self,
+                                             "org.freedesktop.appearance", key,
+                                             g_variant_new ("v", get_color_scheme ()));
++  if (strcmp (user_data->namespace, "org.gnome.desktop.a11y.interface") == 0 &&
++      strcmp (key, "high-contrast") == 0 &&
++      g_variant_is_of_type (new_value, G_VARIANT_TYPE_BOOLEAN))
++    {
++      gboolean hc = g_variant_get_boolean (new_value);
++      xdp_impl_settings_emit_setting_changed (user_data->self,
++					      "org.freedesktop.appearance",
++					      "contrast",
++					      g_variant_new ("v", g_variant_new_uint32 (hc ? 1 : 0)));
++    }
+ }
+ 
+ static void
+
+From 7ffa373918369710bce886f78df487bf5ff5b6e2 Mon Sep 17 00:00:00 2001
+From: Chris Williams <chrisawign@gmail.com>
+Date: Mon, 11 Mar 2024 20:06:49 -0400
+Subject: [PATCH] settings: Update mouse schema name
+
+Mouse settings were moved from gnome-settings-daemon in 2015.
+---
+ src/settings.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/settings.c b/src/settings.c
+index d160beb..b131543 100644
+--- a/src/settings.c
++++ b/src/settings.c
+@@ -306,10 +306,10 @@ init_settings_table (XdpImplSettings *settings,
+     "org.gnome.desktop.calendar",
+     "org.gnome.desktop.input-sources",
+     "org.gnome.desktop.interface",
++    "org.gnome.desktop.peripherals.mouse",
+     "org.gnome.desktop.privacy",
+     "org.gnome.desktop.sound",
+     "org.gnome.desktop.wm.preferences",
+-    "org.gnome.settings-daemon.peripherals.mouse",
+     "org.gnome.settings-daemon.plugins.xsettings",
+   };
+   size_t i;

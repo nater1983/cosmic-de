@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-session/archive/6d16513d77db627b93332f4ad5125c47f4fedea3/cosmic-session-6d16513d77db627b93332f4ad5125c47f4fedea3.tar.gz
+wget -c https://github.com/pop-os/cosmic-session/archive/e9858d914cd0c07bacbadf7f5672cb9d0f53a72b/cosmic-session-e9858d914cd0c07bacbadf7f5672cb9d0f53a72b.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-session
-VERSION=20250220.6d16513
-_commit=6d16513d77db627b93332f4ad5125c47f4fedea3
+VERSION=20250322.e9858d9
+_commit=e9858d914cd0c07bacbadf7f5672cb9d0f53a72b
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

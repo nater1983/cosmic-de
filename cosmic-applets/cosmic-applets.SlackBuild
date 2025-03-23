@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-applets/archive/2b88f359917604cb14f9ad8667b4b242580d4a8b/cosmic-applets-2b88f359917604cb14f9ad8667b4b242580d4a8b.tar.gz
+wget -c https://github.com/pop-os/cosmic-applets/archive/546811981e11e4e27710c99b12c7c7569b75ec31/cosmic-applets-546811981e11e4e27710c99b12c7c7569b75ec31.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-applets
-VERSION=20250221.2b88f35
-_commit=2b88f359917604cb14f9ad8667b4b242580d4a8b
+VERSION=20250322.5468119
+_commit=546811981e11e4e27710c99b12c7c7569b75ec31
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

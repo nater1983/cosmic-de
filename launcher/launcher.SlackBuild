@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/launcher/archive/0e01b09dddc3b6da13fa57970b6eebd10a187b1b/launcher-0e01b09dddc3b6da13fa57970b6eebd10a187b1b.tar.gz
+wget -c https://github.com/pop-os/launcher/archive/926abeb37348f28a0ca6c35c706807f249fa900a/launcher-926abeb37348f28a0ca6c35c706807f249fa900a.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=launcher
-VERSION=20250129.0e01b09
-_commit=0e01b09dddc3b6da13fa57970b6eebd10a187b1b
+VERSION=20250309.926abeb
+_commit=926abeb37348f28a0ca6c35c706807f249fa900a
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

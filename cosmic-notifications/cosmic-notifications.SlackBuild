@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-notifications/archive/ea717d7938ba1b6d2f9c997e5db5eb54f441634f/cosmic-notifications-ea717d7938ba1b6d2f9c997e5db5eb54f441634f.tar.gz
+wget -c https://github.com/pop-os/cosmic-notifications/archive/2e86fc0c8698f4b76d866b1b28139cfd3df86d50/cosmic-notifications-2e86fc0c8698f4b76d866b1b28139cfd3df86d50.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-notifications
-VERSION=20250220.ea717d7
-_commit=ea717d7938ba1b6d2f9c997e5db5eb54f441634f
+VERSION=20250320.2e86fc0
+_commit=2e86fc0c8698f4b76d866b1b28139cfd3df86d50
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

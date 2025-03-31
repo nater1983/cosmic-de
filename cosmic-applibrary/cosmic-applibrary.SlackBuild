@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-applibrary/archive/634596845f1f2ec2fac097383681ddcde45c5938/cosmic-applibrary-634596845f1f2ec2fac097383681ddcde45c5938.tar.gz
+wget -c https://github.com/pop-os/cosmic-applibrary/archive/d14d98a6ce02033249554e20e79a45ea34e32ad5/cosmic-applibrary-d14d98a6ce02033249554e20e79a45ea34e32ad5.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-applibrary
-VERSION=20250320.6345968
-_commit=634596845f1f2ec2fac097383681ddcde45c5938
+VERSION=20250326.d14d98a
+_commit=d14d98a6ce02033249554e20e79a45ea34e32ad5
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

@@ -22,13 +22,13 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://reddoglinux.ddns.net/distfile/cosmic-wallpapers-cb8e6d653b5062e046e83b4670c3d9944fa39c39.tar.xz
+wget -c https://reddoglinux.ddns.net/distfile/cosmic-wallpapers-189c2c63d31da84ebb161acfd21a503f98a1b4c7.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-wallpapers
-VERSION=20241031.cb8e6d6
-_commit=cb8e6d653b5062e046e83b4670c3d9944fa39c39
+VERSION=20250408.189c2c6
+_commit=189c2c63d31da84ebb161acfd21a503f98a1b4c7
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

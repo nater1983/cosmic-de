@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-launcher/archive/77ca2085554f1d8641f58d7954fd57be232e5006/cosmic-launcher-77ca2085554f1d8641f58d7954fd57be232e5006.tar.gz
+wget -c https://github.com/pop-os/cosmic-launcher/archive/a150f0f16d7aacc7bee6053b2d0d0b61573a3f51/cosmic-launcher-a150f0f16d7aacc7bee6053b2d0d0b61573a3f51.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-launcher
-VERSION=20250415.77ca208
-_commit=77ca2085554f1d8641f58d7954fd57be232e5006
+VERSION=20250502.a150f0f
+_commit=a150f0f16d7aacc7bee6053b2d0d0b61573a3f51
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

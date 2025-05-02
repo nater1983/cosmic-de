@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-screenshot/archive/1747b8a53eb3d6a3b72c90f4247e462da6289ffa/cosmic-screenshot-1747b8a53eb3d6a3b72c90f4247e462da6289ffa.tar.gz
+wget -c https://github.com/pop-os/cosmic-screenshot/archive/f7d066971061b530cdff56281351af0feee72a59/cosmic-screenshot-f7d066971061b530cdff56281351af0feee72a59.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-screenshot
-VERSION=20250416.1747b8a
-_commit=1747b8a53eb3d6a3b72c90f4247e462da6289ffa
+VERSION=20250502.f7d0669
+_commit=f7d066971061b530cdff56281351af0feee72a59
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

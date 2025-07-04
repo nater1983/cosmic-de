@@ -61,6 +61,9 @@ find -L . \
 
 make DESTDIR=$PKG install
 
+install -vDm 0644 $CWD/cosmic-dark.jpg -t $PKG/usr/share/backgrounds/cosmic/
+install -vDm 0644 $CWD/SlackGalaxy.jpg -t $PKG/usr/share/backgrounds/cosmic/
+
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \

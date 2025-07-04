@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-files/archive/3fc5d51053d9edaa5b2b390c5a65a96c7b9d41c5/cosmic-files-3fc5d51053d9edaa5b2b390c5a65a96c7b9d41c5.tar.gz
+wget -c https://github.com/pop-os/cosmic-files/archive/e4ffec63a13f3449c6c3e5c2cf630a859933393c/cosmic-files-e4ffec63a13f3449c6c3e5c2cf630a859933393c.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-files
-VERSION=20250501.3fc5d51
-_commit=3fc5d51053d9edaa5b2b390c5a65a96c7b9d41c5
+VERSION=20250703.e4ffec6
+_commit=e4ffec63a13f3449c6c3e5c2cf630a859933393c
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -81,6 +81,7 @@ rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
 sed -i 's/debug = true/debug = false/g' Cargo.toml
+patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \

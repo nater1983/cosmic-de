@@ -22,13 +22,13 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/pop-os/cosmic-launcher/archive/a150f0f16d7aacc7bee6053b2d0d0b61573a3f51/cosmic-launcher-a150f0f16d7aacc7bee6053b2d0d0b61573a3f51.tar.gz
+wget -c https://github.com/pop-os/cosmic-launcher/archive/84b16525b2603149f2066b891aaae9928e8bece6/cosmic-launcher-84b16525b2603149f2066b891aaae9928e8bece6.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=cosmic-launcher
-VERSION=20250502.a150f0f
-_commit=a150f0f16d7aacc7bee6053b2d0d0b61573a3f51
+VERSION=20250623.84b1652
+_commit=84b16525b2603149f2066b891aaae9928e8bece6
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -75,6 +75,7 @@ cd $TMP
 rm -rf $PRGNAM-$_commit
 tar xvf $CWD/$PRGNAM-$_commit.tar.?z || exit 1
 cd $PRGNAM-$_commit || exit 1
+patch -Np1 -R -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \

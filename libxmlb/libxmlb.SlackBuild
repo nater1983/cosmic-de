@@ -22,12 +22,12 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/hughsie/libxmlb/archive/0.3.17/libxmlb-0.3.17.tar.gz
+wget -c https://github.com/hughsie/libxmlb/archive/0.3.22/libxmlb-0.3.22.tar.gz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libxmlb
-VERSION=${VERSION:-0.3.17}
+VERSION=${VERSION:-0.3.22}
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}

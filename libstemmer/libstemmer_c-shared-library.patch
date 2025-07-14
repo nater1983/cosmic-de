@@ -11,24 +11,33 @@ shared library yet [1].
 Alpinelinux-patch: https://git.alpinelinux.org/aports/tree/community/snowball/libstemmer-library.patch?id=28f9d9e192876c43fd96bc5856cd9d8a50dd49c0
 Upstream-issue: https://github.com/snowballstem/snowball/issues/34
 
+From 189038016f32133dddbc79879f9b777a75334355 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 11 May 2025 17:43:16 -0500
+Subject: [PATCH] Update GNUmakefile
+
+---
+ GNUmakefile | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
 diff --git a/GNUmakefile b/GNUmakefile
-index 98eb1fa..9b539ec 100644
+index e1403be..88a6c2d 100644
 --- a/GNUmakefile
 +++ b/GNUmakefile
 @@ -4,6 +4,8 @@
  # which hard-code it.
- SNOWBALL_VERSION = 2.2.0
+ SNOWBALL_VERSION = 3.0.1
  
 +MAJOR_VERSION := $(shell echo $(SNOWBALL_VERSION) | cut -d. -f1)
 +
  ifeq ($(OS),Windows_NT)
  EXEEXT = .exe
  endif
-@@ -170,12 +172,17 @@ C_OTHER_OBJECTS = $(C_OTHER_SOURCES:.c=.o)
+@@ -190,12 +192,17 @@ C_OTHER_OBJECTS = $(C_OTHER_SOURCES:.c=.o)
  JAVA_CLASSES = $(JAVA_SOURCES:.java=.class)
  JAVA_RUNTIME_CLASSES=$(JAVARUNTIME_SOURCES:.java=.class)
  
--CFLAGS=-O2 -W -Wall -Wmissing-prototypes -Wmissing-declarations
+-CFLAGS=-g -O2 -W -Wall -Wmissing-prototypes -Wmissing-declarations -Wshadow $(WERROR)
 -CPPFLAGS=
 +CFLAGS+=-fPIC -W -Wall -Wmissing-prototypes -Wmissing-declarations
 +CPPFLAGS+=
@@ -45,6 +54,7 @@ index 98eb1fa..9b539ec 100644
  
  algorithms.mk: libstemmer/mkalgorithms.pl libstemmer/modules.txt
  	libstemmer/mkalgorithms.pl algorithms.mk libstemmer/modules.txt
+
 diff --git a/libstemmer/symbol.map b/libstemmer/symbol.map
 new file mode 100644
 index 0000000..7a3d423

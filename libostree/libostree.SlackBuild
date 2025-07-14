@@ -22,12 +22,12 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/ostreedev/ostree/releases/download/v2025.1/libostree-2025.1.tar.xz
+wget -c https://github.com/ostreedev/ostree/releases/download/v2025.3/libostree-2025.3.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=libostree
-VERSION=${VERSION:-2025.1}
+VERSION=${VERSION:-2025.3}
 TAG=_cosmic
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
